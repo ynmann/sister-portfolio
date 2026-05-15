@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Madina Bekassyl — интерьерный дизайнер. Жилые и коммерческие пространства в Алматы. С 2014 года.">
+  <title>Madina Bekassyl — Interior Design</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Tokens ─────────────────────────────────────────────────── */
+    :root {
+      --bg:          #F5F1EB;
+      --bg-warm:     #EDE7DA;
+      --bg-dark:     #18160F;
+      --text:        #18160F;
+      --muted:       #7A7060;
+      --gold:        #B89060;
+      --gold-dim:    #9A7448;
+      --border:      #DDD5C4;
+      --white:       #FFFFFF;
+
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans:  'Inter', system-ui, sans-serif;
+
+      --pad:   clamp(1.25rem, 5vw, 5rem);
+      --max:   1440px;
+      --nav-h: 72px;
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ─── Reset ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; height: auto; }
+    a   { color: inherit; text-decoration: none; }
+    button { background: none; border: none; cursor: pointer; font: inherit; }
+
+    /* ─── Helpers ─────────────────────────────────────────────────── */
+    .label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Scroll reveal */
+    .r { opacity: 0; transform: translateY(28px); transition: opacity .75s var(--ease-out), transform .75s var(--ease-out); }
+    .r.d1 { transition-delay: .12s; }
+    .r.d2 { transition-delay: .24s; }
+    .r.d3 { transition-delay: .36s; }
+    .r.d4 { transition-delay: .48s; }
+    .r.on { opacity: 1; transform: none; }
+
+    /* ─── NAV ─────────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 200;
+      height: var(--nav-h);
+      transition: background .35s var(--ease-out), box-shadow .35s var(--ease-out);
+    }
+    .nav.s {
+      background: rgba(245,241,235,.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav__i {
+      max-width: var(--max);
+      margin: auto;
+      padding: 0 var(--pad);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav__logo { height: 32px; }
+    .nav__logo img { height: 100%; width: auto; }
+
+    .nav__links { display: flex; gap: 2.5rem; align-items: center; }
+    .nav__lk {
+      font-size: 12px;
+      letter-spacing: .06em;
+      color: var(--text);
+      position: relative;
+      transition: color .2s;
+    }
+    .nav__lk::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform .3s var(--ease-out);
+    }
+    .nav__lk:hover { color: var(--gold); }
+    .nav__lk:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    .nav__cta {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      border: 1px solid var(--text);
+      padding: .45rem 1.25rem;
+      transition: background .2s, color .2s;
+    }
+    .nav__cta:hover { background: var(--text); color: var(--bg); }
+
+    /* burger */
+    .nav__burger { display: none; flex-direction: column; gap: 5px; width: 28px; }
+    .nav__burger span { display: block; height: 1px; background: var(--text); transition: transform .3s, opacity .3s; }
+    .nav__burger.o span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .nav__burger.o span:nth-child(2) { opacity: 0; }
+    .nav__burger.o span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+    /* ─── MOBILE MENU ─────────────────────────────────────────────── */
+    .mob {
+      position: fixed; inset: 0; z-index: 190;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2rem;
+      transform: translateX(100%);
+      transition: transform .4s var(--ease-out);
+    }
+    .mob.o { transform: none; }
+    .mob__lk {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 7vw, 3rem);
+      font-weight: 300;
+      color: var(--text);
+      transition: color .2s;
+    }
+    .mob__lk:hover { color: var(--gold); }
+
+    /* ─── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .hero__l {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: calc(var(--nav-h) + 5rem) var(--pad) 5rem;
+      position: relative; z-index: 2;
+    }
+
+    .hero__eyebrow {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: .25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 2rem;
+      opacity: 0; transform: translateY(18px);
+      animation: up .8s var(--ease-out) .15s forwards;
+    }
+
+    .hero__title {
+      font-family: var(--serif);
+      font-size: clamp(4.5rem, 7.5vw, 9rem);
+      font-weight: 300; line-height: .88;
+      margin-bottom: 2.25rem;
+      opacity: 0; transform: translateY(30px);
+      animation: up .9s var(--ease-out) .3s forwards;
+    }
+    .hero__title em { font-style: italic; color: var(--gold); display: block; }
+
+    .hero__sig {
+      width: clamp(180px, 20vw, 280px);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fi 1.1s var(--ease-out) .55s forwards;
+    }
+    .hero__sig img { width: 100%; }
+
+    .hero__tagline {
+      font-family: var(--serif);
+      font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+      font-style: italic; font-weight: 300;
+      color: var(--muted); margin-bottom: 2.25rem;
+      opacity: 0; transform: translateY(18px);
+      animation: up .8s var(--ease-out) .7s forwards;
+    }
+
+    .hero__meta {
+      display: flex; align-items: center; gap: .85rem;
+      font-size: 11px; letter-spacing: .09em; color: var(--muted);
+      opacity: 0;
+      animation: fi .8s var(--ease-out) .88s forwards;
+    }
+    .hero__dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    /* right photo */
+    .hero__r { position: relative; overflow: hidden; }
+    .hero__r img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+    }
+    .hero__r::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background: linear-gradient(to right, var(--bg) 0%, transparent 25%);
+    }
+
+    /* scroll indicator */
+    .hero__scroll {
+      position: absolute;
+      bottom: 2.5rem; left: var(--pad);
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: .6rem;
+      font-size: 9px; font-weight: 500;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--muted); z-index: 3;
+      opacity: 0;
+      animation: fi 1s var(--ease-out) 1.2s forwards;
+    }
+    .hero__scroll-ln {
+      width: 1px; height: 56px;
+      background: var(--border); overflow: hidden; position: relative;
+    }
+    .hero__scroll-ln::after {
+      content: '';
+      position: absolute; top: -100%; left: 0; right: 0; height: 100%;
+      background: var(--gold);
+      animation: sl 2s ease-in-out 1.6s infinite;
+    }
+
+    @keyframes up { to { opacity:1; transform:none; } }
+    @keyframes fi { to { opacity:1; } }
+    @keyframes sl { 0%{top:-100%} 100%{top:100%} }
+
+    /* ─── STATS BAR ───────────────────────────────────────────────── */
+    .stats {
+      background: var(--bg-dark);
+      padding: 3.5rem var(--pad);
+    }
+    .stats__i {
+      max-width: var(--max); margin: auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+    }
+    .stats__cell {
+      text-align: center;
+      padding: 0 1.5rem;
+      border-left: 1px solid rgba(255,255,255,.1);
+    }
+    .stats__cell:first-child { border-left: none; }
+    .stats__n {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 3.25rem);
+      font-weight: 300; color: var(--gold);
+      line-height: 1; margin-bottom: .5rem;
+    }
+    .stats__l {
+      display: block;
+      font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(245,241,235,.45);
+    }
+
+    /* ─── ABOUT ───────────────────────────────────────────────────── */
+    .about {
+      padding: 9rem var(--pad);
+      max-width: var(--max); margin: auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 6vw, 7rem);
+      align-items: center;
+    }
+
+    .about__img {
+      position: relative;
+      aspect-ratio: 3/4; overflow: hidden;
+    }
+    .about__img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .8s var(--ease-out);
+    }
+    .about__img:hover img { transform: scale(1.04); }
+    .about__img-frame {
+      position: absolute; inset: 0;
+      border: 1px solid var(--border);
+      transform: translate(14px, 14px);
+      pointer-events: none;
+    }
+
+    .about__h {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
+      font-weight: 300; line-height: 1.15;
+      margin-bottom: 2rem;
+    }
+    .about__h em { font-style: italic; color: var(--gold); }
+
+    .about__body { margin-bottom: 2.25rem; }
+    .about__body p { font-size: 14.5px; color: var(--muted); line-height: 1.85; margin-bottom: 1.1rem; }
+
+    .about__creds { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 2.75rem; }
+    .about__cred {
+      display: flex; align-items: center; gap: .75rem;
+      font-size: 12px; letter-spacing: .06em; color: var(--muted);
+    }
+    .about__cred::before { content: ''; width: 22px; height: 1px; background: var(--gold); flex-shrink: 0; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: .65rem;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .18em; text-transform: uppercase;
+      transition: all .25s;
+    }
+    .btn::after { content: '→'; transition: transform .25s; }
+    .btn:hover::after { transform: translateX(5px); }
+    .btn--border {
+      padding: .9rem 2rem;
+      border: 1px solid var(--text); color: var(--text);
+    }
+    .btn--border:hover { background: var(--text); color: var(--bg); }
+    .btn--gold {
+      padding: .9rem 2rem;
+      background: var(--gold); border: 1px solid var(--gold); color: var(--white);
+    }
+    .btn--gold:hover { background: var(--gold-dim); border-color: var(--gold-dim); }
+
+    /* ─── SERVICES ────────────────────────────────────────────────── */
+    .svcs { background: var(--bg-warm); padding: 9rem var(--pad); }
+    .svcs__i { max-width: var(--max); margin: auto; }
+
+    .svcs__hd { margin-bottom: 4.5rem; }
+    .svcs__hd h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
+      font-weight: 300; line-height: 1.15;
+    }
+
+    .svcs__grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 2px;
+    }
+
+    .svc {
+      background: var(--white);
+      padding: 3rem;
+      display: flex; flex-direction: column;
+      transition: background .3s, color .3s;
+    }
+    .svc:hover { background: var(--bg-dark); color: var(--bg); }
+
+    .svc__n {
+      font-family: var(--serif);
+      font-size: 4.5rem; font-weight: 300; line-height: 1;
+      color: var(--border); margin-bottom: 1.5rem;
+      transition: color .3s;
+    }
+    .svc:hover .svc__n { color: rgba(255,255,255,.06); }
+
+    .svc__title {
+      font-family: var(--serif);
+      font-size: 1.55rem; font-weight: 400;
+      margin-bottom: .9rem; line-height: 1.25;
+    }
+
+    .svc__desc {
+      font-size: 13.5px; line-height: 1.8;
+      color: var(--muted); flex: 1; margin-bottom: 1.75rem;
+      transition: color .3s;
+    }
+    .svc:hover .svc__desc { color: rgba(245,241,235,.5); }
+
+    .svc__price {
+      font-family: var(--serif);
+      font-size: 1.15rem; font-weight: 500;
+      color: var(--gold); letter-spacing: .02em;
+    }
+
+    /* ─── PORTFOLIO ───────────────────────────────────────────────── */
+    .folio { padding: 9rem var(--pad); max-width: var(--max); margin: auto; }
+
+    .folio__hd {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 3.5rem;
+    }
+    .folio__hd h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
+      font-weight: 300; line-height: 1.15;
+    }
+    .folio__count {
+      font-size: 11px; letter-spacing: .12em; color: var(--muted);
+      text-transform: uppercase; padding-bottom: .5rem;
+    }
+
+    .folio__grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 260px;
+      gap: 10px;
+    }
+
+    /* layout: big-small-small / small-small-small */
+    .pi:nth-child(1) { grid-column: span 7; grid-row: span 2; }
+    .pi:nth-child(2) { grid-column: span 5; }
+    .pi:nth-child(3) { grid-column: span 5; }
+    .pi:nth-child(4) { grid-column: span 4; }
+    .pi:nth-child(5) { grid-column: span 4; }
+    .pi:nth-child(6) { grid-column: span 4; }
+
+    .pi {
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      background: var(--bg-warm);
+    }
+
+    .pi__img { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .pi__img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform .85s var(--ease-out);
+    }
+    .pi:hover .pi__img img { transform: scale(1.07); }
+
+    .pi__ov {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(18,16,10,.82) 0%, rgba(18,16,10,.15) 55%, transparent 100%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.75rem 2rem;
+      opacity: 0; transition: opacity .4s var(--ease-out);
+    }
+    .pi:hover .pi__ov { opacity: 1; }
+
+    .pi__name {
+      font-family: var(--serif);
+      font-size: 1.5rem; font-weight: 300;
+      color: var(--white); line-height: 1.2;
+      margin-bottom: .3rem;
+    }
+    .pi__sub { font-size: 11px; letter-spacing: .1em; color: rgba(255,255,255,.6); }
+
+    .pi__tag {
+      position: absolute; top: 1rem; right: 1rem;
+      font-size: 10px; font-weight: 500; letter-spacing: .15em;
+      text-transform: uppercase;
+      background: rgba(245,241,235,.14);
+      backdrop-filter: blur(8px);
+      color: transparent; padding: .3rem .75rem;
+      transition: color .3s;
+    }
+    .pi:hover .pi__tag { color: var(--white); }
+
+    /* ─── PROCESS ─────────────────────────────────────────────────── */
+    .proc { background: var(--bg-dark); padding: 9rem var(--pad); }
+    .proc__i { max-width: var(--max); margin: auto; }
+
+    .proc__hd { margin-bottom: 5rem; }
+    .proc__hd .label { color: var(--gold); }
+    .proc__hd h2 {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
+      font-weight: 300; line-height: 1.15; color: var(--bg);
+    }
+    .proc__hd h2 em { font-style: italic; color: var(--gold); }
+
+    .proc__steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 4rem; }
+
+    .pstep { border-top: 1px solid rgba(255,255,255,.1); padding-top: 2rem; }
+    .pstep__n {
+      font-family: var(--serif);
+      font-size: 3.5rem; font-weight: 300;
+      color: var(--gold); line-height: 1; margin-bottom: 1.1rem;
+    }
+    .pstep__t {
+      font-size: .9rem; font-weight: 500;
+      letter-spacing: .06em; color: var(--bg);
+      margin-bottom: .75rem;
+    }
+    .pstep__d { font-size: 13.5px; line-height: 1.8; color: rgba(245,241,235,.45); }
+
+    /* ─── CONTACT ─────────────────────────────────────────────────── */
+    .contact { background: var(--bg-warm); padding: 9rem var(--pad); }
+    .contact__i {
+      max-width: var(--max); margin: auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(3rem, 8vw, 9rem); align-items: start;
+    }
+
+    .contact__h {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 4.5vw, 4.5rem);
+      font-weight: 300; line-height: 1.08;
+      margin-bottom: 1.75rem;
+    }
+    .contact__h em { font-style: italic; color: var(--gold); }
+
+    .contact__p {
+      font-size: 14px; color: var(--muted); line-height: 1.85;
+      margin-bottom: 2.75rem;
+    }
+
+    .contact__r { padding-top: 3.5rem; }
+    .contact__items { display: flex; flex-direction: column; gap: 2.25rem; }
+
+    .ci__label {
+      font-size: 9px; font-weight: 600;
+      letter-spacing: .24em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: .45rem;
+    }
+    .ci__val {
+      font-family: var(--serif);
+      font-size: 1.25rem; font-weight: 400; color: var(--text);
+    }
+    .ci__val a { transition: color .2s; }
+    .ci__val a:hover { color: var(--gold); }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────── */
+    .ft {
+      background: var(--bg-dark);
+      padding: 2.25rem var(--pad);
+    }
+    .ft__i {
+      max-width: var(--max); margin: auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ft__logo img { height: 26px; width: auto; opacity: .65; }
+    .ft__copy { font-size: 11px; letter-spacing: .05em; color: rgba(245,241,235,.35); }
+    .ft__links { display: flex; gap: 2rem; }
+    .ft__lk {
+      font-size: 11px; letter-spacing: .05em;
+      color: rgba(245,241,235,.35); transition: color .2s;
+    }
+    .ft__lk:hover { color: var(--gold); }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero__r { height: 55vw; min-height: 280px; }
+      .hero__r::before { background: linear-gradient(to bottom, var(--bg) 0%, transparent 25%); }
+      .hero__scroll { display: none; }
+
+      .about { grid-template-columns: 1fr; }
+
+      .stats__i { grid-template-columns: repeat(2,1fr); }
+      .stats__cell:nth-child(2n+1) { border-left: none; }
+      .stats__cell:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.1); padding-top: 1.5rem; margin-top: 1.5rem; }
+
+      .proc__steps { grid-template-columns: repeat(2,1fr); }
+
+      .contact__i { grid-template-columns: 1fr; }
+      .contact__r { padding-top: 0; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --pad: 1.25rem; }
+
+      .nav__links, .nav__cta { display: none; }
+      .nav__burger { display: flex; }
+
+      .hero__l { padding: calc(var(--nav-h) + 2rem) var(--pad) 2.5rem; }
+      .hero__title { font-size: clamp(3.5rem, 14vw, 5.5rem); }
+      .hero__sig { width: 180px; }
+
+      .svcs__grid { grid-template-columns: 1fr; }
+      .svc { padding: 2rem; }
+
+      .folio__grid { grid-template-columns: 1fr; grid-auto-rows: 58vw; }
+      .pi:nth-child(n) { grid-column: span 1; grid-row: span 1; }
+      .folio__hd { flex-direction: column; align-items: flex-start; gap: .5rem; }
+
+      .proc__steps { grid-template-columns: 1fr; gap: 2.5rem; }
+
+      .ft__i { flex-direction: column; gap: 1.25rem; text-align: center; }
+      .ft__links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── MOBILE MENU ────────────────────────────────────────────────────── -->
+<div class="mob" id="mob">
+  <a href="#about"     class="mob__lk" data-ml>Обо мне</a>
+  <a href="#services"  class="mob__lk" data-ml>Услуги</a>
+  <a href="#portfolio" class="mob__lk" data-ml>Проекты</a>
+  <a href="#contact"   class="mob__lk" data-ml>Контакты</a>
+</div>
+
+<!-- ─── NAV ────────────────────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <div class="nav__i">
+    <a href="./" class="nav__logo">
+      <img src="static/images/logo/logo-black.png" alt="Madina Bekassyl">
+    </a>
+    <div class="nav__links">
+      <a href="#about"     class="nav__lk">Обо мне</a>
+      <a href="#services"  class="nav__lk">Услуги</a>
+      <a href="#portfolio" class="nav__lk">Проекты</a>
+      <a href="#contact"   class="nav__lk">Контакты</a>
+    </div>
+    <a href="#contact" class="nav__cta">Связаться</a>
+    <button class="nav__burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── HERO ────────────────────────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero__l">
+    <span class="hero__eyebrow">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+    <h1 class="hero__title">
+      Madina<br>
+      <em>Bekassyl</em>
+    </h1>
+    <div class="hero__sig">
+      <img src="static/images/logo/signature-black.gif" alt="Signature">
+    </div>
+    <p class="hero__tagline">Создаю пространства, которые отражают вас</p>
+    <div class="hero__meta">
+      <span>КазГАСА</span>
+      <span class="hero__dot"></span>
+      <span>Белград, Сербия</span>
+      <span class="hero__dot"></span>
+      <span>С 2014 года</span>
+    </div>
+  </div>
+  <div class="hero__r">
+    <img src="static/images/photos/portrait.jpg" alt="Madina Bekassyl — Interior Designer">
+  </div>
+  <a href="#about" class="hero__scroll">
+    <span>Scroll</span>
+    <div class="hero__scroll-ln"></div>
+  </a>
+</section>
+
+<!-- ─── STATS ────────────────────────────────────────────────────────────── -->
+<div class="stats">
+  <div class="stats__i">
+    <div class="stats__cell r">
+      <strong class="stats__n">50 000+</strong>
+      <span class="stats__l">кв.м. спроектировано</span>
+    </div>
+    <div class="stats__cell r d1">
+      <strong class="stats__n">10+</strong>
+      <span class="stats__l">лет опыта</span>
+    </div>
+    <div class="stats__cell r d2">
+      <strong class="stats__n">50+</strong>
+      <span class="stats__l">реализованных проектов</span>
+    </div>
+    <div class="stats__cell r d3">
+      <strong class="stats__n">2</strong>
+      <span class="stats__l">страны практики</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ABOUT ────────────────────────────────────────────────────────────── -->
+<section id="about">
+  <div class="about">
+    <div class="about__img r">
+      <img src="static/images/photos/portrait-2.jpg" alt="Madina Bekassyl">
+      <div class="about__img-frame"></div>
+    </div>
+    <div class="about__content">
+      <span class="label">Обо мне</span>
+      <h2 class="about__h r">
+        Дизайнер,<br><em>создающий истории</em>
+      </h2>
+      <div class="about__body r d1">
+        <p>Я Мадина — интерьерный дизайнер с 2014 года. Выпускница Казахской Государственной Архитектурно-Строительной Академии (КазГАСА).</p>
+        <p>Стажировалась в Сербии, в Белграде, где приобрела ценный международный опыт и уникальные подходы к созданию пространства.</p>
+        <p>За годы работы разработала более 50 000 квадратных метров жилых и коммерческих пространств. Каждый проект отражает индивидуальность клиента и высочайшие стандарты качества.</p>
+      </div>
+      <div class="about__creds r d2">
+        <div class="about__cred">КазГАСА — архитектурно-строительное образование</div>
+        <div class="about__cred">Стажировка в Белграде, Сербия</div>
+        <div class="about__cred">Жилые и коммерческие проекты</div>
+        <div class="about__cred">Функциональность и эстетика в каждой детали</div>
+      </div>
+      <a href="#contact" class="btn btn--border r d3">Обсудить проект</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SERVICES ──────────────────────────────────────────────────────────── -->
+<section id="services" class="svcs">
+  <div class="svcs__i">
+    <div class="svcs__hd r">
+      <span class="label">Услуги</span>
+      <h2>Что я предлагаю</h2>
+    </div>
+    <div class="svcs__grid">
+      <div class="svc r">
+        <span class="svc__n">01</span>
+        <h3 class="svc__title">Полный дизайн-проект</h3>
+        <p class="svc__desc">Максимально наполненный проект: планировочные решения, коллажи, реалистичные 3D-визуализации (4–8 ракурсов), рабочие чертежи для строительной бригады, ведомость и техзадание по индивидуальной мебели.</p>
+        <div class="svc__price">12 000 ₸ / кв.м.</div>
+      </div>
+      <div class="svc r d1">
+        <span class="svc__n">02</span>
+        <h3 class="svc__title">Эскизный проект</h3>
+        <p class="svc__desc">Планировочное решение, коллажи с реальными материалами и мебелью в рамках бюджета, рабочие чертежи и ведомость к проекту. Идеально для объектов до 150 кв.м. Гибкая система расчёта.</p>
+        <div class="svc__price">9 000 ₸ / кв.м.</div>
+      </div>
+      <div class="svc r d2">
+        <span class="svc__n">03</span>
+        <h3 class="svc__title">Планировочное решение</h3>
+        <p class="svc__desc">Замер помещения, обмерный план, разработка 2–3 вариантов планировки на основе брифа. Расстановка мебели и сантехники с габаритными размерами. Можно заказать отдельно.</p>
+        <div class="svc__price">2 000 ₸ / кв.м.</div>
+      </div>
+      <div class="svc r d3">
+        <span class="svc__n">04</span>
+        <h3 class="svc__title">Авторское сопровождение</h3>
+        <p class="svc__desc">Контроль соответствия проекту, выезды в салоны, согласование материалов и отделки, постоянная связь с прорабом, приёмка ключевых этапов стройки, оперативное решение вопросов.</p>
+        <div class="svc__price">150 000 ₸ / мес.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PORTFOLIO ─────────────────────────────────────────────────────────── -->
+<section id="portfolio" class="folio">
+  <div class="folio__hd r">
+    <div>
+      <span class="label">Портфолио</span>
+      <h2>Избранные проекты</h2>
+    </div>
+    <span class="folio__count">6 проектов</span>
+  </div>
+
+  <div class="folio__grid">
+
+    <div class="pi r">
+      <div class="pi__img">
+        <img src="static/images/projects/belle-view/bedroom-1.jpg" alt="Belle View" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Belle View</h3>
+        <p class="pi__sub">2024 &nbsp;·&nbsp; Современный стиль</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+    <div class="pi r d1">
+      <div class="pi__img">
+        <img src="static/images/projects/kazybek/cover.png" alt="Kazybek Bi" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Kazybek Bi</h3>
+        <p class="pi__sub">2024 &nbsp;·&nbsp; Современный стиль</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+    <div class="pi r d2">
+      <div class="pi__img">
+        <img src="static/images/projects/arena-park/cover.jpg" alt="Arena Park" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Arena Park</h3>
+        <p class="pi__sub">2024 &nbsp;·&nbsp; Минимализм</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+    <div class="pi r">
+      <div class="pi__img">
+        <img src="static/images/projects/arena-park-2/cover.png" alt="Arena Park II" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Arena Park II</h3>
+        <p class="pi__sub">2024 &nbsp;·&nbsp; Современный стиль</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+    <div class="pi r d1">
+      <div class="pi__img">
+        <img src="static/images/projects/arman/cover.png" alt="Arman" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Arman</h3>
+        <p class="pi__sub">2024 &nbsp;·&nbsp; Современный с классикой</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+    <div class="pi r d2">
+      <div class="pi__img">
+        <img src="static/images/projects/office/cover.png" alt="Office" loading="lazy">
+      </div>
+      <div class="pi__ov">
+        <h3 class="pi__name">Office</h3>
+        <p class="pi__sub">Коммерческий &nbsp;·&nbsp; Современный</p>
+      </div>
+      <span class="pi__tag">2024</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── PROCESS ───────────────────────────────────────────────────────────── -->
+<section class="proc">
+  <div class="proc__i">
+    <div class="proc__hd r">
+      <span class="label">Как я работаю</span>
+      <h2>Процесс создания<br><em>вашего пространства</em></h2>
+    </div>
+    <div class="proc__steps">
+      <div class="pstep r">
+        <div class="pstep__n">01</div>
+        <h3 class="pstep__t">Знакомство и бриф</h3>
+        <p class="pstep__d">Встреча, обсуждение пожеланий, стиля, бюджета и сроков. Заполнение подробного брифа для точного понимания задачи и характера будущего пространства.</p>
+      </div>
+      <div class="pstep r d1">
+        <div class="pstep__n">02</div>
+        <h3 class="pstep__t">Концепция и планировка</h3>
+        <p class="pstep__d">Разработка 2–3 планировочных решений. Выбор и детальная проработка концепции с коллажами, референсами и подбором реальных материалов в рамках бюджета.</p>
+      </div>
+      <div class="pstep r d2">
+        <div class="pstep__n">03</div>
+        <h3 class="pstep__t">Визуализация и сдача</h3>
+        <p class="pstep__d">Реалистичные 3D-визуализации по утверждённым коллажам, полный комплект рабочих чертежей, ведомость материалов и авторское сопровождение реализации.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ───────────────────────────────────────────────────────────── -->
+<section id="contact" class="contact">
+  <div class="contact__i">
+    <div class="contact__l r">
+      <span class="label">Контакты</span>
+      <h2 class="contact__h">
+        Готовы создать<br>
+        <em>ваше пространство?</em>
+      </h2>
+      <p class="contact__p">
+        Если вы думаете о дизайн-проекте или просто хотите узнать больше — напишите мне. Я отвечу в течение 24 часов и с удовольствием обсужу вашу идею.
+      </p>
+      <a href="mailto:madinabks.interiordesign@gmail.com" class="btn btn--border">Написать письмо</a>
+    </div>
+    <div class="contact__r r d1">
+      <div class="contact__items">
+        <div>
+          <div class="ci__label">Email</div>
+          <div class="ci__val">
+            <a href="mailto:madinabks.interiordesign@gmail.com">madinabks.interiordesign@gmail.com</a>
+          </div>
+        </div>
+        <div>
+          <div class="ci__label">Телефон</div>
+          <div class="ci__val">
+            <a href="tel:+77072067072">+7 (707) 206 70 72</a>
+          </div>
+        </div>
+        <div>
+          <div class="ci__label">Instagram</div>
+          <div class="ci__val">
+            <a href="https://instagram.com/madinabks.interiors" target="_blank" rel="noopener">@madinabks.interiors</a>
+          </div>
+        </div>
+        <div>
+          <div class="ci__label">Локация</div>
+          <div class="ci__val">Алматы, Казахстан</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer class="ft">
+  <div class="ft__i">
+    <div class="ft__logo">
+      <img src="static/images/logo/logo-white.png" alt="Madina Bekassyl">
+    </div>
+    <span class="ft__copy">© 2024 Madina Bekassyl. Все права защищены.</span>
+    <div class="ft__links">
+      <a href="#about"     class="ft__lk">Обо мне</a>
+      <a href="#portfolio" class="ft__lk">Проекты</a>
+      <a href="#contact"   class="ft__lk">Контакты</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll shadow
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('s', window.scrollY > 40);
+  }, { passive: true });
+
+  // Mobile menu
+  const burger = document.getElementById('burger');
+  const mob    = document.getElementById('mob');
+  burger.addEventListener('click', () => {
+    const open = mob.classList.toggle('o');
+    burger.classList.toggle('o', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  document.querySelectorAll('[data-ml]').forEach(lk => {
+    lk.addEventListener('click', () => {
+      mob.classList.remove('o');
+      burger.classList.remove('o');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('on');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.r').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
