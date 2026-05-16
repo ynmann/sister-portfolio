@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Madina Bekassyl — интерьерный дизайнер. Жилые и коммерческие пространства в Алматы. С 2014 года.">
+  <meta name="description" content="Madina Bekassyl — интерьерный дизайнер с дипломом архитектора. Жилые и коммерческие пространства в Алматы. С 2014 года.">
   <title>Madina Bekassyl — Interior Design</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,9 +19,7 @@
 <!-- Preloader -->
 <div class="preloader" id="preloader" aria-hidden="true">
   <div class="preloader__count">0</div>
-  <div class="preloader__bar">
-    <div class="preloader__bar-fill"></div>
-  </div>
+  <div class="preloader__bar"><div class="preloader__bar-fill"></div></div>
 </div>
 
 <!-- Custom cursor -->
@@ -29,7 +27,7 @@
 <div class="cur-ring" id="curRing" aria-hidden="true"></div>
 
 <!-- Mobile menu -->
-<div class="mob" id="mob" aria-label="Мобильное меню">
+<div class="mob" id="mob">
   <a href="#about"     class="mob__lk">Обо мне</a>
   <a href="#services"  class="mob__lk">Услуги</a>
   <a href="#portfolio" class="mob__lk">Проекты</a>
@@ -37,7 +35,7 @@
 </div>
 
 <!-- Nav -->
-<nav class="nav" id="nav" aria-label="Главное меню">
+<nav class="nav" id="nav">
   <div class="nav__i">
     <a href="./" class="nav__logo">
       <img src="static/images/logo/logo-white.png" alt="Madina Bekassyl">
@@ -55,48 +53,52 @@
   </div>
 </nav>
 
-<!-- Hero -->
+<!-- ─── HERO ─────────────────────────────────────────── -->
 <section class="hero" id="home">
-  <div class="hero__l">
-    <span class="hero__tag">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+  <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
+
+  <div class="hero__content">
+    <span class="hero__tag" data-anim="fade">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+
     <h1 class="hero__title">
-      <span class="hero__title-line"><span>Madina</span></span>
-      <span class="hero__title-line italic"><span>Bekassyl</span></span>
+      <span class="hero__title-line" data-anim="slide"><span>Madina</span></span>
+      <span class="hero__title-line italic" data-anim="slide"><span>Bekassyl</span></span>
     </h1>
-    <div class="hero__sig">
+
+    <div class="hero__sig" data-anim="fade">
       <video autoplay loop muted playsinline>
         <source src="static/images/logo/signature-black.mp4" type="video/mp4">
-        <img src="static/images/logo/signature-black.gif" alt="Подпись Мадины">
+        <img src="static/images/logo/signature-black.gif" alt="">
       </video>
     </div>
-    <p class="hero__tagline">Создаю пространства, которые отражают вас</p>
-    <div class="hero__meta">
+
+    <p class="hero__tagline" data-anim="fade">Создаю пространства, которые отражают вас</p>
+
+    <div class="hero__meta" data-anim="fade">
       <span>КазГАСА</span>
       <span class="hero__sep"></span>
-      <span>Белград, Сербия</span>
+      <span>Белград</span>
       <span class="hero__sep"></span>
       <span>С 2014 года</span>
     </div>
   </div>
-  <div class="hero__r">
-    <img src="static/images/photos/portrait.jpg" alt="Madina Bekassyl — Interior Designer">
-  </div>
+
   <a href="#about" class="hero__scroll" aria-label="Прокрутить вниз">
     <span>Scroll</span>
     <div class="hero__scroll-line"></div>
   </a>
 </section>
 
-<!-- Marquee -->
+<!-- ─── MARQUEE ──────────────────────────────────────── -->
 <div class="marquee" aria-hidden="true">
   <div class="marquee__track">
     <div class="marquee__item">
       Interior Design <span class="marquee__dot"></span>
       Алматы <span class="marquee__dot"></span>
       С 2014 года <span class="marquee__dot"></span>
-      50 000+ кв.м. <span class="marquee__dot"></span>
       50+ проектов <span class="marquee__dot"></span>
       2 страны <span class="marquee__dot"></span>
+      Диплом архитектора <span class="marquee__dot"></span>
       КазГАСА <span class="marquee__dot"></span>
       Белград
     </div>
@@ -104,84 +106,83 @@
       Interior Design <span class="marquee__dot"></span>
       Алматы <span class="marquee__dot"></span>
       С 2014 года <span class="marquee__dot"></span>
-      50 000+ кв.м. <span class="marquee__dot"></span>
       50+ проектов <span class="marquee__dot"></span>
       2 страны <span class="marquee__dot"></span>
+      Диплом архитектора <span class="marquee__dot"></span>
       КазГАСА <span class="marquee__dot"></span>
       Белград
     </div>
   </div>
 </div>
 
-<!-- Stats -->
+<!-- ─── STATS ─────────────────────────────────────────── -->
 <div class="stats">
   <div class="stats__i">
-    <div class="stats__cell reveal">
-      <strong class="stats__n">50 000+</strong>
-      <span class="stats__l">кв.м. спроектировано</span>
-    </div>
-    <div class="stats__cell reveal d1">
-      <strong class="stats__n">10+</strong>
-      <span class="stats__l">лет опыта</span>
-    </div>
-    <div class="stats__cell reveal d2">
+    <div class="stats__cell js-reveal">
       <strong class="stats__n">50+</strong>
       <span class="stats__l">реализованных проектов</span>
     </div>
-    <div class="stats__cell reveal d3">
+    <div class="stats__cell js-reveal">
+      <strong class="stats__n">10+</strong>
+      <span class="stats__l">лет опыта</span>
+    </div>
+    <div class="stats__cell js-reveal">
+      <strong class="stats__n">14 000 ₸</strong>
+      <span class="stats__l">полный проект / кв.м.</span>
+    </div>
+    <div class="stats__cell js-reveal">
       <strong class="stats__n">2</strong>
-      <span class="stats__l">страны практики</span>
+      <span class="stats__l">проекта в месяц — не больше</span>
     </div>
   </div>
 </div>
 
-<!-- Statement — fromanother.love inspired -->
+<!-- ─── STATEMENT ────────────────────────────────────── -->
 <div class="statement">
   <div class="statement__i">
-    <p class="statement__text reveal">
-      Со мной вы получаете не просто красивый интерьер&nbsp;—
-      вы получаете пространство, которое правильно построено,
-      продуманно спроектировано и прослужит вам десятилетия.
+    <p class="statement__text js-reveal">
+      Со мной вы получаете не просто красивый интерьер&nbsp;— вы получаете
+      пространство, которое правильно построено, продуманно спроектировано
+      и прослужит вам десятилетия.
     </p>
-    <div class="statement__line reveal d1" aria-hidden="true"></div>
-    <span class="statement__sub reveal d2">Madina Bekassyl &nbsp;·&nbsp; Interior Design &nbsp;·&nbsp; Алматы</span>
+    <div class="statement__line js-reveal"></div>
+    <span class="statement__sub js-reveal">Madina Bekassyl &nbsp;·&nbsp; Interior Design &nbsp;·&nbsp; Алматы</span>
   </div>
 </div>
 
-<!-- About -->
-<section id="about" class="about-section">
+<!-- ─── ABOUT ─────────────────────────────────────────── -->
+<section id="about" class="about-wrap">
   <div class="about">
-    <div class="about__visual reveal">
+    <div class="about__visual js-reveal">
       <div class="about__img">
-        <img src="static/images/photos/portrait-2.jpg" alt="Madina Bekassyl">
+        <img src="static/images/photos/portrait-2.jpg" alt="Madina Bekassyl" data-parallax>
       </div>
       <div class="about__frame" aria-hidden="true"></div>
       <div class="about__num" aria-hidden="true">50+</div>
     </div>
     <div class="about__content">
-      <span class="about__tag reveal">Обо мне</span>
-      <h2 class="about__h reveal">Архитектурная база&nbsp;—<br><em>ваша гарантия</em></h2>
-      <div class="about__text reveal d1">
+      <span class="about__tag js-reveal">Обо мне</span>
+      <h2 class="about__h js-reveal">Архитектурная база&nbsp;—<br><em>ваша гарантия</em></h2>
+      <div class="about__text js-reveal">
         <p>Я Мадина — интерьерный дизайнер из Алматы с дипломом архитектора с 2014 года и более чем 50 реализованными проектами.</p>
         <p>Окончила КазГАСА и проходила стажировку в студии Базис-А в Белграде, была ведущим дизайнером одной из студий Алматы.</p>
         <p>Нестандартные планировки, вторичное жильё, многоуровневые пространства, дома с нуля — я работаю с любой сложностью, потому что за этим стоит архитектурная база, а не только насмотренность.</p>
       </div>
-      <div class="about__creds reveal d2">
+      <div class="about__creds js-reveal">
         <div class="about__cred">КазГАСА — диплом архитектора</div>
         <div class="about__cred">Стажировка в Белграде, студия Базис-А</div>
         <div class="about__cred">Ведущий дизайнер студии в Алматы</div>
         <div class="about__cred">Любая сложность — от вторичного жилья до домов с нуля</div>
       </div>
-      <a href="#contact" class="btn btn--gold reveal d3">Обсудить проект</a>
+      <a href="#contact" class="btn btn--gold js-reveal">Обсудить проект</a>
     </div>
   </div>
 </section>
 
-<!-- Portfolio -->
+<!-- ─── PORTFOLIO ─────────────────────────────────────── -->
 <section id="portfolio" class="folio">
   <div class="folio__i">
-
-    <div class="folio__hd reveal">
+    <div class="folio__hd js-reveal">
       <div>
         <span class="folio__tag">Портфолио</span>
         <h2 class="folio__h">Избранные<br>проекты</h2>
@@ -190,7 +191,7 @@
     </div>
 
     <ul class="proj-list">
-      <li class="proj-item reveal" data-project="belle-view">
+      <li class="proj-item js-reveal" data-project="belle-view">
         <div class="proj-item__inner">
           <span class="proj-item__num">01</span>
           <div class="proj-item__info">
@@ -201,7 +202,7 @@
           <div class="proj-item__arrow">→</div>
         </div>
       </li>
-      <li class="proj-item reveal d1" data-project="kazybek">
+      <li class="proj-item js-reveal" data-project="kazybek">
         <div class="proj-item__inner">
           <span class="proj-item__num">02</span>
           <div class="proj-item__info">
@@ -212,7 +213,7 @@
           <div class="proj-item__arrow">→</div>
         </div>
       </li>
-      <li class="proj-item reveal d2" data-project="arena-park">
+      <li class="proj-item js-reveal" data-project="arena-park">
         <div class="proj-item__inner">
           <span class="proj-item__num">03</span>
           <div class="proj-item__info">
@@ -223,7 +224,7 @@
           <div class="proj-item__arrow">→</div>
         </div>
       </li>
-      <li class="proj-item reveal" data-project="arena-park-2">
+      <li class="proj-item js-reveal" data-project="arena-park-2">
         <div class="proj-item__inner">
           <span class="proj-item__num">04</span>
           <div class="proj-item__info">
@@ -234,7 +235,7 @@
           <div class="proj-item__arrow">→</div>
         </div>
       </li>
-      <li class="proj-item reveal d1" data-project="arman">
+      <li class="proj-item js-reveal" data-project="arman">
         <div class="proj-item__inner">
           <span class="proj-item__num">05</span>
           <div class="proj-item__info">
@@ -245,7 +246,7 @@
           <div class="proj-item__arrow">→</div>
         </div>
       </li>
-      <li class="proj-item reveal d2" data-project="office">
+      <li class="proj-item js-reveal" data-project="office">
         <div class="proj-item__inner">
           <span class="proj-item__num">06</span>
           <div class="proj-item__info">
@@ -257,114 +258,109 @@
         </div>
       </li>
     </ul>
-
   </div>
 </section>
 
-<!-- Floating hover image for project list -->
-<div class="proj-hover-img" id="projHoverImg" aria-hidden="true">
-  <img src="" alt="">
-</div>
+<!-- Floating hover image -->
+<div class="proj-hover-img" id="projHoverImg" aria-hidden="true"><img src="" alt=""></div>
 
-<!-- Services -->
+<!-- ─── SERVICES ──────────────────────────────────────── -->
 <section id="services" class="svcs">
   <div class="svcs__i">
     <div class="svcs__hd">
-      <span class="svcs__tag reveal">Услуги</span>
-      <h2 class="svcs__h reveal">Что я предлагаю</h2>
+      <span class="svcs__tag js-reveal">Услуги</span>
+      <h2 class="svcs__h js-reveal">Что я предлагаю</h2>
     </div>
     <div class="svcs__grid">
-      <div class="svc reveal">
+      <div class="svc js-reveal">
         <span class="svc__n">01</span>
         <h3 class="svc__title">Планировочное решение + Электрика</h3>
         <p class="svc__desc">Отправная точка любого ремонта. Разрабатываю 2–3 варианта планировки на основе ваших пожеланий. Выбираете лучший или создаём микс до финального ДА. Дополнительно по запросу: план освещения, розеток, управления светом. Подходит, если делаете дизайн самостоятельно, но хотите профессиональную основу.</p>
         <div class="svc__price">2 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 160 000 тг.</span></div>
       </div>
-      <div class="svc reveal d1">
+      <div class="svc js-reveal">
         <span class="svc__n">02</span>
         <h3 class="svc__title">Эскизный дизайн-проект</h3>
-        <p class="svc__desc">Полноценный проект в формате коллажей. Коллаж — это концепция интерьера: стиль, цвета и настроение пространства. Финальный вид согласовывается вживую в процессе ремонта. Подходит, если у вас уже есть опыт ремонта и вы готовы участвовать в выборе материалов лично.</p>
+        <p class="svc__desc">Полноценный проект в формате коллажей — концепция интерьера: стиль, цвета и настроение пространства. Финальный вид согласовывается вживую в процессе ремонта. Подходит, если у вас уже есть опыт ремонта и вы готовы участвовать в выборе материалов лично.</p>
         <div class="svc__price">10 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 800 000 тг.</span></div>
       </div>
-      <div class="svc reveal d2">
+      <div class="svc js-reveal">
         <span class="svc__n">03</span>
         <h3 class="svc__title">Полный дизайн-проект</h3>
-        <p class="svc__desc">Максимально наполненный формат. Видите свою будущую квартиру до начала ремонта — фотореалистично, по каждому помещению, с реальными материалами, мебелью и светом. 4–8 ракурсов. Никаких сюрпризов в процессе. В состав входит всё: планировка, коллажи, 3Д визуализации, рабочие чертежи, техзадание по мебели, ведомость отделки.</p>
+        <p class="svc__desc">Максимально наполненный формат. Видите свою будущую квартиру до начала ремонта — фотореалистично, по каждому помещению, с реальными материалами, мебелью и светом. 4–8 ракурсов. Никаких сюрпризов. В состав входит всё: планировка, коллажи, 3Д визуализации, рабочие чертежи, техзадание по мебели, ведомость отделки.</p>
         <div class="svc__price">14 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 1 120 000 тг.</span></div>
       </div>
-      <div class="svc reveal d3">
+      <div class="svc js-reveal">
         <span class="svc__n">04</span>
         <h3 class="svc__title">Комплектация и авторское сопровождение</h3>
-        <p class="svc__desc">Остаюсь рядом на протяжении всего ремонта. Контролирую стройку, веду коммуникацию с подрядчиками и строителями, выезжаю на ключевые этапы, слежу за поставками и решаю все вопросы, которые неизбежно возникают в процессе. Вы занимаетесь своей жизнью — я занимаюсь вашим ремонтом.</p>
+        <p class="svc__desc">Остаюсь рядом на протяжении всего ремонта. Контролирую стройку, веду коммуникацию с подрядчиками, выезжаю на ключевые этапы, слежу за поставками и решаю все вопросы, которые неизбежно возникают в процессе. Вы занимаетесь своей жизнью — я занимаюсь вашим ремонтом.</p>
         <div class="svc__price">от 150 000 ₸ / мес.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Process -->
+<!-- ─── PROCESS ───────────────────────────────────────── -->
 <section class="proc">
   <div class="proc__i">
     <div class="proc__hd">
-      <span class="proc__tag reveal">Как я работаю</span>
-      <h2 class="proc__h reveal">Процесс создания<br><em>вашего пространства</em></h2>
+      <span class="proc__tag js-reveal">Как я работаю</span>
+      <h2 class="proc__h js-reveal">Процесс создания<br><em>вашего пространства</em></h2>
+      <p class="proc__lead js-reveal">Я хочу, чтобы процесс создания вашего интерьера был понятным и приятным на каждом этапе.</p>
     </div>
     <div class="proc__steps">
-      <div class="pstep reveal">
+      <div class="pstep js-reveal">
         <div class="pstep__n">01</div>
         <h3 class="pstep__t">Знакомство <span class="pstep__free">бесплатно</span></h3>
-        <p class="pstep__d">Встречаемся лично или созваниваемся по видеосвязи. Вы рассказываете о своём объекте, пожеланиях, стиле и бюджете. Я отвечаю на все вопросы. Никаких обязательств — просто разговор.</p>
+        <p class="pstep__d">Встречаемся лично или созваниваемся по видеосвязи. Вы рассказываете о своём объекте, пожеланиях, стиле и бюджете. Никаких обязательств — просто разговор.</p>
       </div>
-      <div class="pstep reveal d1">
+      <div class="pstep js-reveal">
         <div class="pstep__n">02</div>
         <h3 class="pstep__t">Договор и бриф</h3>
-        <p class="pstep__d">Работаем строго по договору в чётко обозначенные сроки. После подписания вы заполняете анкету — приятный опросник, который поможет мне понять вас и ваш будущий дом. Создаём общий чат в удобном мессенджере.</p>
+        <p class="pstep__d">Работаем строго по договору в чётко обозначенные сроки. После подписания вы заполняете анкету и мы создаём общий чат в удобном мессенджере, где будет храниться вся история нашей работы.</p>
       </div>
-      <div class="pstep reveal d2">
+      <div class="pstep js-reveal">
         <div class="pstep__n">03</div>
         <h3 class="pstep__t">Замер и планировка</h3>
         <p class="pstep__d">Выезжаю на объект, делаю обмерный план. Разрабатываю 2–3 варианта планировки. Выбираете лучший или создаём микс — без ограничений по правкам на этом этапе.</p>
       </div>
-      <div class="pstep reveal">
+      <div class="pstep js-reveal">
         <div class="pstep__n">04</div>
         <h3 class="pstep__t">Дизайн-концепция</h3>
-        <p class="pstep__d">В зависимости от выбранного пакета — коллажи или фотореалистичные 3D-визуализации. Подбираем реальную мебель, отделку, свет и сантехнику в рамках вашего бюджета. Правим до вашего искреннего «да».</p>
+        <p class="pstep__d">Коллажи или фотореалистичные 3D-визуализации в зависимости от пакета. Подбираем реальную мебель, отделку, свет и сантехнику в рамках вашего бюджета. Правим до вашего искреннего «да».</p>
       </div>
-      <div class="pstep reveal d1">
+      <div class="pstep js-reveal">
         <div class="pstep__n">05</div>
         <h3 class="pstep__t">Рабочие чертежи</h3>
         <p class="pstep__d">Полный комплект документации для строительной бригады: от обмерного плана до развёрток по санузлам с раскладкой плитки. Строители получают чёткую инструкцию — вопросов «а как это делать?» не возникает.</p>
       </div>
-      <div class="pstep reveal d2">
+      <div class="pstep js-reveal">
         <div class="pstep__n">06</div>
         <h3 class="pstep__t">Сопровождение и сдача</h3>
-        <p class="pstep__d">При заказе авторского сопровождения контролирую стройку, выезжаю на ключевые этапы и слежу за поставками. В финале — фиксируем результат и вы въезжаете в готовый дом. Среднее время разработки полного проекта — 4–6 недель.</p>
+        <p class="pstep__d">При заказе авторского сопровождения контролирую стройку, выезжаю на ключевые этапы, слежу за поставками. В финале — фиксируем результат и вы въезжаете в готовый дом. Среднее время разработки полного проекта — 4–6 недель.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Contact -->
+<!-- ─── CONTACT ───────────────────────────────────────── -->
 <section id="contact" class="contact">
+  <canvas class="contact__canvas" id="contactCanvas" aria-hidden="true"></canvas>
   <div class="contact__i">
     <div class="contact__l">
-      <span class="contact__tag reveal">Готовы начать?</span>
-      <h2 class="contact__h reveal">
-        Если вы дочитали<br>до этого момента —<br><em>это хороший знак.</em>
+      <span class="contact__tag js-reveal">Готовы начать?</span>
+      <h2 class="contact__h js-reveal">
+        Если вы дочитали<br>до этого момента&nbsp;—<br><em>это хороший знак.</em>
       </h2>
-      <p class="contact__p reveal d1">
-        Напишите мне сейчас — расскажите коротко: что за объект, примерный метраж и когда планируете начать. Я отвечу и предложу время для бесплатной консультации.
-      </p>
-      <p class="contact__usп reveal d1">Я беру не более 2 новых проектов в месяц&nbsp;— чтобы каждому клиенту уделять столько внимания, сколько нужно.</p>
-      <a href="mailto:madinabks.interiordesign@gmail.com" class="btn btn--outline reveal d2">Написать письмо</a>
+      <p class="contact__p js-reveal">Напишите мне сейчас — расскажите коротко: что за объект, примерный метраж и когда планируете начать. Я отвечу и предложу время для бесплатной консультации.</p>
+      <p class="contact__usp js-reveal">Я беру не более 2 новых проектов в месяц&nbsp;— чтобы каждому клиенту уделять столько внимания, сколько нужно.</p>
+      <a href="mailto:madinabks.interiordesign@gmail.com" class="btn btn--outline js-reveal">Написать письмо</a>
     </div>
-    <div class="contact__r reveal d1">
+    <div class="contact__r js-reveal">
       <div class="contact__items">
         <div>
           <div class="ci__label">Email</div>
-          <div class="ci__val">
-            <a href="mailto:madinabks.interiordesign@gmail.com">madinabks.interiordesign@gmail.com</a>
-          </div>
+          <div class="ci__val"><a href="mailto:madinabks.interiordesign@gmail.com">madinabks.interiordesign@gmail.com</a></div>
         </div>
         <div>
           <div class="ci__label">Телефон</div>
@@ -372,9 +368,7 @@
         </div>
         <div>
           <div class="ci__label">Instagram</div>
-          <div class="ci__val">
-            <a href="https://instagram.com/madinabks.interiors" target="_blank" rel="noopener">@madinabks.interiors</a>
-          </div>
+          <div class="ci__val"><a href="https://instagram.com/madinabks.interiors" target="_blank" rel="noopener">@madinabks.interiors</a></div>
         </div>
         <div>
           <div class="ci__label">Локация</div>
@@ -385,12 +379,10 @@
   </div>
 </section>
 
-<!-- Footer -->
+<!-- ─── FOOTER ────────────────────────────────────────── -->
 <footer class="footer">
   <div class="footer__i">
-    <div class="footer__logo">
-      <img src="static/images/logo/logo-white.png" alt="Madina Bekassyl">
-    </div>
+    <div class="footer__logo"><img src="static/images/logo/logo-white.png" alt="Madina Bekassyl"></div>
     <span class="footer__copy">© 2025 Madina Bekassyl. Все права защищены.</span>
     <div class="footer__links">
       <a href="#about"     class="footer__lk">Обо мне</a>
@@ -407,11 +399,9 @@
       <div class="gal__name" id="galName"></div>
       <div class="gal__meta" id="galMeta"></div>
     </div>
-    <button class="gal__close" id="galClose" aria-label="Закрыть галерею">✕</button>
+    <button class="gal__close" id="galClose" aria-label="Закрыть">✕</button>
   </header>
-  <div class="gal__body">
-    <div class="gal__grid" id="galGrid"></div>
-  </div>
+  <div class="gal__body"><div class="gal__grid" id="galGrid"></div></div>
 </div>
 
 <!-- Lightbox -->
@@ -421,13 +411,20 @@
     <button class="lb__close" id="lbClose" aria-label="Закрыть">✕</button>
   </header>
   <div class="lb__stage">
-    <button class="lb__btn lb__prev" id="lbPrev" aria-label="Предыдущее">&#8249;</button>
+    <button class="lb__btn lb__prev" id="lbPrev">&#8249;</button>
     <img class="lb__img" id="lbImg" src="" alt="">
-    <button class="lb__btn lb__next" id="lbNext" aria-label="Следующее">&#8250;</button>
+    <button class="lb__btn lb__next" id="lbNext">&#8250;</button>
   </div>
   <div class="lb__thumbs" id="lbThumbs"></div>
 </div>
 
+<!-- Three.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Lenis smooth scroll -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<!-- GSAP + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="static/js/app.js"></script>
 </body>
 </html>

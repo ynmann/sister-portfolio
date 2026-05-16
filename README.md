@@ -35,3 +35,5 @@ Any push to `master` updates the live site within ~1 minute.
 ---
 
 Portfolio of [Madina Bekassyl](https://instagram.com/madinabks.interiors) — interior designer, Almaty, Kazakhstan.
+
+
