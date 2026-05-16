@@ -54,25 +54,51 @@
 
   <div class="hero__wrap">
 
-    <!-- Top row: tag + signature -->
+    <!-- Top row: tag -->
     <div class="hero__eyebrow">
       <span class="hero__tag">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
-      <div class="hero__sig" aria-hidden="true">
-        <video autoplay loop muted playsinline>
-          <source src="static/images/logo/signature-black.mp4" type="video/mp4">
-          <img src="static/images/logo/signature-black.gif" alt="">
-        </video>
-      </div>
     </div>
 
-    <!-- Center: huge name + floating project image -->
+    <!-- Center: huge name + dynamic project slideshow -->
     <div class="hero__center">
       <h1 class="hero__title">
         <span class="hero__title-line"><span>Madina</span></span>
         <span class="hero__title-line italic"><span>Bekassyl</span></span>
       </h1>
+
+      <!-- Cycling project images with Ken Burns + clip-path transitions -->
       <div class="hero__feat" aria-hidden="true">
-        <img src="static/images/projects/arman/01.jpg" alt="">
+        <div class="hero__feat-slides">
+          <div class="hero__feat-slide is-active" data-label="Belle View">
+            <img src="static/images/projects/belle-view/04.jpg" alt="">
+          </div>
+          <div class="hero__feat-slide" data-label="Kazybek Bi">
+            <img src="static/images/projects/kazybek/03.jpg" alt="">
+          </div>
+          <div class="hero__feat-slide" data-label="Arena Park">
+            <img src="static/images/projects/arena-park/06.jpg" alt="">
+          </div>
+          <div class="hero__feat-slide" data-label="Arman">
+            <img src="static/images/projects/arman/05.jpg" alt="">
+          </div>
+          <div class="hero__feat-slide" data-label="Office">
+            <img src="static/images/projects/office/04.jpg" alt="">
+          </div>
+        </div>
+        <!-- Decorative offset frames -->
+        <div class="hero__feat-frame hero__feat-frame--back"></div>
+        <div class="hero__feat-frame hero__feat-frame--front"></div>
+        <!-- Meta: label + dot indicators -->
+        <div class="hero__feat-meta">
+          <span class="hero__feat-lbl">Belle View</span>
+          <div class="hero__feat-dots">
+            <span class="hero__feat-dot is-active"></span>
+            <span class="hero__feat-dot"></span>
+            <span class="hero__feat-dot"></span>
+            <span class="hero__feat-dot"></span>
+            <span class="hero__feat-dot"></span>
+          </div>
+        </div>
       </div>
     </div>
 

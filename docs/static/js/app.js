@@ -297,6 +297,7 @@ function onPageReady() {
   document.body.style.overflow = '';
 
   playHeroAnims();
+  initHeroSlideshow();
   initHeroScrollOut();
   initScrollReveal();
   initParallax();
@@ -312,8 +313,7 @@ function onPageReady() {
 /* === HERO ENTRANCE =================================== */
 function playHeroAnims() {
   if (IS_REDUCED) {
-    // Instant reveal for reduced-motion users
-    gsap.set(['.hero__tag', '.hero__sig', '.hero__title-line span',
+    gsap.set(['.hero__tag', '.hero__title-line span',
               '.hero__tagline', '.hero__meta', '.hero__scroll',
               '.hero__feat'], { clearProps: 'all' });
     return;
@@ -322,17 +322,83 @@ function playHeroAnims() {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
   tl
     .fromTo('.hero__tag',            { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.85 })
-    .fromTo('.hero__sig',            { opacity: 0 },        { opacity: 1, duration: 0.7 }, '-=0.4')
     .fromTo('.hero__title-line span',{ yPercent: 115 },     { yPercent: 0, duration: 1.3, stagger: 0.15 }, '-=0.35')
+    .fromTo('.hero__feat',           { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1 }, '-=0.6')
     .fromTo('.hero__tagline',        { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.85 }, '-=0.55')
     .fromTo('.hero__meta',           { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.75 }, '-=0.45')
     .fromTo('.hero__scroll',         { opacity: 0 },        { opacity: 1, duration: 0.6 }, '-=0.25');
+}
 
-  // Clip-path reveal for floating project image
-  gsap.fromTo('.hero__feat',
-    { clipPath: 'inset(100% 0 0 0)' },
-    { clipPath: 'inset(0% 0 0 0)', duration: 1.5, ease: 'power4.inOut', delay: 1.0 }
-  );
+/* === HERO SLIDESHOW ================================== */
+function initHeroSlideshow() {
+  const slides = document.querySelectorAll('.hero__feat-slide');
+  const dots   = document.querySelectorAll('.hero__feat-dot');
+  const lblEl  = document.querySelector('.hero__feat-lbl');
+  if (!slides.length) return;
+
+  let current = 0;
+  let autoTimer;
+  let running = false;
+
+  _kenBurns(slides[0].querySelector('img'));
+
+  function _kenBurns(img) {
+    if (!img || IS_REDUCED) return;
+    gsap.fromTo(img,
+      { scale: 1.09, transformOrigin: '60% 50%' },
+      { scale: 1.02, duration: 5.5, ease: 'none' }
+    );
+  }
+
+  function goTo(next) {
+    if (next === current || running) return;
+    running = true;
+    const prev = current;
+    current = next;
+
+    gsap.to(slides[prev], {
+      clipPath: 'inset(0 0 0 100%)', duration: 1.0, ease: 'power3.inOut',
+      onComplete: () => {
+        gsap.set(slides[prev], { opacity: 0, clipPath: 'inset(0 0 0 100%)' });
+        slides[prev].classList.remove('is-active');
+        running = false;
+      },
+    });
+
+    slides[current].classList.add('is-active');
+    gsap.set(slides[current], { opacity: 1, clipPath: 'inset(0 100% 0 0)' });
+    gsap.to(slides[current], {
+      clipPath: 'inset(0 0% 0 0)', duration: 1.0, ease: 'power3.inOut',
+      onStart: () => _kenBurns(slides[current].querySelector('img')),
+    });
+
+    if (lblEl) {
+      gsap.to(lblEl, {
+        opacity: 0, duration: 0.25,
+        onComplete: () => {
+          lblEl.textContent = slides[current].dataset.label || '';
+          gsap.to(lblEl, { opacity: 1, duration: 0.35 });
+        },
+      });
+    }
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === current));
+  }
+
+  function startAuto() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => goTo((current + 1) % slides.length), 4500);
+  }
+
+  dots.forEach((dot, i) => {
+    dot.style.pointerEvents = 'auto';
+    dot.addEventListener('click', () => { goTo(i); startAuto(); });
+  });
+
+  const feat = document.querySelector('.hero__feat');
+  feat?.addEventListener('mouseenter', () => clearInterval(autoTimer));
+  feat?.addEventListener('mouseleave', startAuto);
+
+  startAuto();
 }
 
 /* === HERO SCROLL-OUT PARALLAX ======================== */
@@ -351,11 +417,6 @@ function initHeroScrollOut() {
     opacity: 0, ease: 'none',
   });
 
-  // Featured image parallax
-  gsap.to('.hero__feat img', {
-    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.2 },
-    y: -80, ease: 'none',
-  });
 }
 
 /* === SCROLL REVEAL ==================================== */

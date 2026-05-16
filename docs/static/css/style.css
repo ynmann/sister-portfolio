@@ -202,11 +202,6 @@ button { background: none; border: none; cursor: pointer; font: inherit; color: 
   letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--gold); display: block; opacity: 0;
 }
-.hero__sig {
-  width: clamp(90px, 9vw, 150px);
-  opacity: 0;
-}
-.hero__sig video, .hero__sig img { width: 100%; filter: invert(1); }
 
 /* Center: huge name + floating project image */
 .hero__center {
@@ -227,19 +222,77 @@ button { background: none; border: none; cursor: pointer; font: inherit; color: 
   padding-left: 0.08em;
 }
 
-/* Floating project image — clip-path reveal from bottom */
+/* === HERO FEAT: DYNAMIC SLIDESHOW =================== */
 .hero__feat {
   position: absolute; right: 0; top: 50%;
   transform: translateY(-50%);
-  width: clamp(160px, 22vw, 360px);
-  height: clamp(200px, 30vw, 480px);
+  width: clamp(200px, 26vw, 420px);
+  height: clamp(260px, 34vw, 540px);
+  opacity: 0; /* fades in via GSAP */
+}
+
+/* Image slides stack on top of each other */
+.hero__feat-slides {
+  position: relative; width: 100%; height: 100%;
   overflow: hidden;
-  clip-path: inset(100% 0 0 0);
 }
-.hero__feat img {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block;
+.hero__feat-slide {
+  position: absolute; inset: 0;
+  opacity: 0;
+  clip-path: inset(0 0 0 100%);
 }
+.hero__feat-slide.is-active {
+  opacity: 1;
+  clip-path: inset(0 0% 0 0);
+}
+.hero__feat-slide img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transform: scale(1.08);
+  transform-origin: center;
+}
+
+/* Decorative gold frames offset from the image */
+.hero__feat-frame {
+  position: absolute;
+  border: 1px solid;
+  pointer-events: none;
+}
+.hero__feat-frame--back {
+  inset: -14px auto auto -14px;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  border-color: rgba(184,136,58,0.25);
+  z-index: -1;
+}
+.hero__feat-frame--front {
+  inset: auto -14px -14px auto;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  border-color: rgba(184,136,58,0.10);
+  z-index: -1;
+}
+
+/* Bottom meta: project name + dot indicators */
+.hero__feat-meta {
+  position: absolute;
+  bottom: -2rem; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hero__feat-lbl {
+  font-size: 9px; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(242,237,227,0.32);
+  transition: opacity 0.4s;
+}
+.hero__feat-dots { display: flex; gap: 6px; align-items: center; }
+.hero__feat-dot {
+  height: 1px; width: 16px;
+  background: rgba(184,136,58,0.28);
+  transition: background 0.4s, width 0.4s;
+  cursor: pointer;
+}
+.hero__feat-dot.is-active { background: var(--gold); width: 28px; }
 
 /* Bottom row: tagline + meta + scroll */
 .hero__foot {
@@ -622,8 +675,20 @@ button { background: none; border: none; cursor: pointer; font: inherit; color: 
   .lb__btn { width: 40px; height: 40px; font-size: 1rem; }
   .lb__prev { left: 0.25rem; }
   .lb__next { right: 0.25rem; }
-  /* Hero mobile */
-  .hero__feat { display: none; }
+  /* Hero mobile — feat reflows below title instead of absolute */
+  .hero__center { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+  .hero__feat {
+    position: relative; top: auto; right: auto;
+    transform: none;
+    width: 62vw;
+    height: 42vw;
+    min-height: 160px;
+    align-self: flex-end;
+    margin-right: -1.25rem;
+  }
+  .hero__feat-frame--back,
+  .hero__feat-frame--front { display: none; }
+  .hero__feat-meta { bottom: -1.5rem; }
   .hero__foot { gap: 1.5rem; }
   /* Portfolio mobile: single column */
   .proj-grid { grid-template-columns: 1fr; gap: 3px; }
