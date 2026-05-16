@@ -21,6 +21,9 @@ function projectImages(id, count) {
   );
 }
 
+/* === MOBILE DETECTION ================================ */
+const IS_MOBILE = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+
 /* === LENIS + GSAP ==================================== */
 gsap.registerPlugin(ScrollTrigger);
 
@@ -39,9 +42,10 @@ class HeroScene {
     this.canvas = document.getElementById('heroCanvas');
     if (!this.canvas || typeof THREE === 'undefined') return;
 
-    this.mouse  = { x: 0, y: 0 };
-    this.target = { x: 0, y: 0 };
-    this.time   = 0;
+    this.mouse   = { x: 0, y: 0 };
+    this.target  = { x: 0, y: 0 };
+    this.time    = 0;
+    this._paused = false;
 
     this._init();
     this._loop();
@@ -51,7 +55,22 @@ class HeroScene {
       this.mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
     }, { passive: true });
 
-    window.addEventListener('resize', () => this._resize(), { passive: true });
+    let _rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(_rt);
+      _rt = setTimeout(() => this._resize(), 150);
+    }, { passive: true });
+
+    // Pause when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      this._paused = document.hidden;
+    });
+
+    // Pause when hero is scrolled off-screen
+    const obs = new IntersectionObserver(([e]) => {
+      this._paused = !e.isIntersecting || document.hidden;
+    }, { rootMargin: '200px' });
+    obs.observe(this.canvas);
 
     setTimeout(() => this.canvas.classList.add('ready'), 600);
   }
@@ -76,7 +95,7 @@ class HeroScene {
     const N   = 2500;
     const pos = new Float32Array(N * 3);
     const col = new Float32Array(N * 3);
-    const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle — uniform sphere coverage
+    const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle — even coverage
 
     for (let i = 0; i < N; i++) {
       const y  = 1 - (i / (N - 1)) * 2;
@@ -139,18 +158,17 @@ class HeroScene {
 
   _loop() {
     requestAnimationFrame(() => this._loop());
-    this.time += 0.005;
+    if (this._paused) return;
 
+    this.time += 0.005;
     this.target.x += (this.mouse.x * 0.25 - this.target.x) * 0.025;
     this.target.y += (this.mouse.y * 0.25 - this.target.y) * 0.025;
 
     if (this.sphere) {
       this.sphere.rotation.y = this.time * 0.12 + this.target.x;
       this.sphere.rotation.x = this.target.y * 0.45;
-      const pulse = 1 + Math.sin(this.time * 0.7) * 0.012;
-      this.sphere.scale.setScalar(pulse);
+      this.sphere.scale.setScalar(1 + Math.sin(this.time * 0.7) * 0.012);
     }
-
     if (this.ambient) {
       this.ambient.rotation.y = this.time * 0.025;
     }
@@ -164,10 +182,26 @@ class ContactScene {
   constructor() {
     this.canvas = document.getElementById('contactCanvas');
     if (!this.canvas || typeof THREE === 'undefined') return;
-    this.time = 0;
+    this.time    = 0;
+    this._paused = false;
+
     this._init();
     this._loop();
-    window.addEventListener('resize', () => this._resize(), { passive: true });
+
+    let _rt;
+    window.addEventListener('resize', () => {
+      clearTimeout(_rt);
+      _rt = setTimeout(() => this._resize(), 150);
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      this._paused = document.hidden;
+    });
+
+    const obs = new IntersectionObserver(([e]) => {
+      this._paused = !e.isIntersecting || document.hidden;
+    }, { rootMargin: '100px' });
+    obs.observe(this.canvas);
   }
 
   _init() {
@@ -189,6 +223,7 @@ class ContactScene {
       pos[i*3+1] = (Math.random() - 0.5) * 8;
       pos[i*3+2] = (Math.random() - 0.5) * 4;
     }
+
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
 
@@ -208,6 +243,7 @@ class ContactScene {
 
   _loop() {
     requestAnimationFrame(() => this._loop());
+    if (this._paused) return;
     this.time += 0.003;
     if (this.points) {
       this.points.rotation.y = this.time * 0.08;
@@ -242,48 +278,138 @@ class ContactScene {
   }, 22);
 })();
 
-/* === PAGE READY: kick off all animations + scenes === */
+/* === PAGE READY ====================================== */
 let _readyFired = false;
 function onPageReady() {
   if (_readyFired) return;
   _readyFired = true;
   document.body.style.overflow = '';
+
   playHeroAnims();
+  initHeroScrollOut();
   initScrollReveal();
   initParallax();
-  new HeroScene();
-  new ContactScene();
+  initStatsCountUp();
+
+  if (!IS_MOBILE) {
+    new HeroScene();
+    new ContactScene();
+  }
 }
 
-/* === HERO ENTRANCE ANIMATIONS ======================== */
+/* === HERO ENTRANCE (clip-reveal + fade) ============== */
 function playHeroAnims() {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  tl.from('.hero__tag',        { autoAlpha: 0, y: 18, duration: 0.9 })
-    .from('.hero__title-line', { autoAlpha: 0, y: 52, duration: 1.2, stagger: 0.14 }, '-=0.6')
-    .from('.hero__sig',        { autoAlpha: 0, duration: 0.9, ease: 'power2.out' },   '-=0.5')
-    .from('.hero__tagline',    { autoAlpha: 0, y: 14, duration: 0.8 },                '-=0.4')
-    .from('.hero__meta',       { autoAlpha: 0, y: 10, duration: 0.7 },                '-=0.35')
-    .from('.hero__scroll',     { autoAlpha: 0, duration: 0.6 },                        '-=0.2');
+  tl
+    .fromTo('.hero__tag',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.9 })
+    .fromTo('.hero__title-line span',
+      { yPercent: 115 },
+      { yPercent: 0, duration: 1.25, stagger: 0.13 },
+      '-=0.6')
+    .fromTo('.hero__sig',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.85 },
+      '-=0.55')
+    .fromTo('.hero__tagline',
+      { opacity: 0, y: 14 },
+      { opacity: 1, y: 0, duration: 0.8 },
+      '-=0.4')
+    .fromTo('.hero__meta',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.7 },
+      '-=0.35')
+    .fromTo('.hero__scroll',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.6 },
+      '-=0.2');
 }
 
-/* === SCROLL REVEAL (GSAP ScrollTrigger) ============== */
-function initScrollReveal() {
-  document.querySelectorAll('.js-reveal').forEach(el => {
-    gsap.fromTo(el,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1, y: 0, duration: 1, ease: 'power2.out',
-        scrollTrigger: {
-          trigger: el,
-          start: 'top 88%',
-          toggleActions: 'play none none none',
-        },
-      }
-    );
+/* === HERO SCROLL-OUT PARALLAX ======================== */
+function initHeroScrollOut() {
+  // Content drifts up as user scrolls away from hero
+  gsap.to('.hero__content', {
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1.4,
+    },
+    y: -90,
+    opacity: 0.15,
+    ease: 'none',
+  });
+
+  // Scroll indicator fades out early
+  gsap.to('.hero__scroll', {
+    scrollTrigger: {
+      trigger: '.hero',
+      start: '12% top',
+      end: '35% top',
+      scrub: 1,
+    },
+    opacity: 0,
+    ease: 'none',
   });
 }
 
-/* === PARALLAX ======================================== */
+/* === SCROLL REVEAL ==================================== */
+function initScrollReveal() {
+  // Process steps: staggered group instead of individual
+  const steps = document.querySelectorAll('.pstep.js-reveal');
+  steps.forEach(el => el.classList.remove('js-reveal'));
+  if (steps.length) {
+    gsap.fromTo(steps,
+      { opacity: 0, y: 28 },
+      {
+        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+        scrollTrigger: { trigger: '.proc__steps', start: 'top 82%', toggleActions: 'play none none none' },
+      }
+    );
+  }
+
+  // Services cards: staggered by row
+  const svcs = document.querySelectorAll('.svc.js-reveal');
+  svcs.forEach(el => el.classList.remove('js-reveal'));
+  if (svcs.length) {
+    gsap.fromTo(svcs,
+      { opacity: 0, y: 32 },
+      {
+        opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: 0.12,
+        scrollTrigger: { trigger: '.svcs__grid', start: 'top 82%', toggleActions: 'play none none none' },
+      }
+    );
+  }
+
+  // Everything else: fade+rise or slide-left for tags
+  document.querySelectorAll('.js-reveal').forEach(el => {
+    const isTag = el.classList.contains('about__tag') ||
+                  el.classList.contains('svcs__tag')  ||
+                  el.classList.contains('proc__tag')  ||
+                  el.classList.contains('contact__tag');
+
+    if (isTag) {
+      gsap.fromTo(el,
+        { opacity: 0, x: -22 },
+        {
+          opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+        }
+      );
+    } else {
+      gsap.fromTo(el,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+        }
+      );
+    }
+  });
+}
+
+/* === PORTRAIT PARALLAX ================================ */
 function initParallax() {
   document.querySelectorAll('[data-parallax]').forEach(img => {
     gsap.to(img, {
@@ -294,6 +420,43 @@ function initParallax() {
         start: 'top bottom',
         end: 'bottom top',
         scrub: 1.5,
+      },
+    });
+  });
+}
+
+/* === STATS COUNT-UP ================================== */
+function initStatsCountUp() {
+  document.querySelectorAll('.stats__n').forEach(el => {
+    const text = el.textContent.trim();
+    const m    = text.match(/(\d[\d\s]*)/);
+    if (!m) return;
+
+    const raw    = m[1].replace(/\s/g, '');
+    const end    = parseInt(raw, 10);
+    if (isNaN(end)) return;
+
+    const before = text.slice(0, text.indexOf(m[1]));
+    const after  = text.slice(text.indexOf(m[1]) + m[1].length);
+
+    // Russian thousands separator: space
+    const fmt = n => {
+      const s = String(Math.round(n));
+      return s.length > 3 ? s.slice(0, -3) + ' ' + s.slice(-3) : s;
+    };
+
+    el.textContent = before + '0' + after;
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: 'top 85%',
+      once: true,
+      onEnter: () => {
+        const obj = { n: 0 };
+        gsap.to(obj, {
+          n: end, duration: 1.6, ease: 'power2.out',
+          onUpdate() { el.textContent = before + fmt(obj.n) + after; },
+        });
       },
     });
   });
@@ -357,9 +520,8 @@ function initParallax() {
 (function initMarquee() {
   const wrap = document.querySelector('.marquee__track')?.parentElement;
   if (!wrap) return;
-  const tracks = wrap.querySelectorAll('.marquee__track');
-  if (tracks.length < 2) {
-    wrap.appendChild(tracks[0].cloneNode(true));
+  if (wrap.querySelectorAll('.marquee__track').length < 2) {
+    wrap.appendChild(wrap.querySelector('.marquee__track').cloneNode(true));
   }
 })();
 
