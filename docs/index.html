@@ -13,20 +13,16 @@
 </head>
 <body>
 
-<!-- Noise texture -->
 <div class="noise" aria-hidden="true"></div>
 
-<!-- Preloader -->
 <div class="preloader" id="preloader" aria-hidden="true">
   <div class="preloader__count">0</div>
   <div class="preloader__bar"><div class="preloader__bar-fill"></div></div>
 </div>
 
-<!-- Custom cursor -->
 <div class="cur-dot"  id="curDot"  aria-hidden="true"></div>
 <div class="cur-ring" id="curRing" aria-hidden="true"></div>
 
-<!-- Mobile menu -->
 <div class="mob" id="mob">
   <a href="#about"     class="mob__lk">Обо мне</a>
   <a href="#services"  class="mob__lk">Услуги</a>
@@ -34,7 +30,6 @@
   <a href="#contact"   class="mob__lk">Контакты</a>
 </div>
 
-<!-- Nav -->
 <nav class="nav" id="nav">
   <div class="nav__i">
     <a href="./" class="nav__logo">
@@ -57,41 +52,53 @@
 <section class="hero" id="home">
   <canvas class="hero__canvas" id="heroCanvas" aria-hidden="true"></canvas>
 
-  <div class="hero__content">
-    <span class="hero__tag" data-anim="fade">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+  <div class="hero__wrap">
 
-    <h1 class="hero__title">
-      <span class="hero__title-line" data-anim="slide"><span>Madina</span></span>
-      <span class="hero__title-line italic" data-anim="slide"><span>Bekassyl</span></span>
-    </h1>
-
-    <div class="hero__sig" data-anim="fade">
-      <video autoplay loop muted playsinline>
-        <source src="static/images/logo/signature-black.mp4" type="video/mp4">
-        <img src="static/images/logo/signature-black.gif" alt="">
-      </video>
+    <!-- Top row: tag + signature -->
+    <div class="hero__eyebrow">
+      <span class="hero__tag">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+      <div class="hero__sig" aria-hidden="true">
+        <video autoplay loop muted playsinline>
+          <source src="static/images/logo/signature-black.mp4" type="video/mp4">
+          <img src="static/images/logo/signature-black.gif" alt="">
+        </video>
+      </div>
     </div>
 
-    <p class="hero__tagline" data-anim="fade">Создаю пространства, которые отражают вас</p>
-
-    <div class="hero__meta" data-anim="fade">
-      <span>КазГАСА</span>
-      <span class="hero__sep"></span>
-      <span>Белград</span>
-      <span class="hero__sep"></span>
-      <span>С 2014 года</span>
+    <!-- Center: huge name + floating project image -->
+    <div class="hero__center">
+      <h1 class="hero__title">
+        <span class="hero__title-line"><span>Madina</span></span>
+        <span class="hero__title-line italic"><span>Bekassyl</span></span>
+      </h1>
+      <div class="hero__feat" aria-hidden="true">
+        <img src="static/images/projects/arman/01.jpg" alt="">
+      </div>
     </div>
+
+    <!-- Bottom row: tagline + meta + scroll -->
+    <div class="hero__foot">
+      <p class="hero__tagline">Создаю пространства, которые отражают вас</p>
+      <div class="hero__meta">
+        <span>КазГАСА</span>
+        <span class="hero__sep"></span>
+        <span>Белград</span>
+        <span class="hero__sep"></span>
+        <span>С 2014 года</span>
+      </div>
+      <a href="#about" class="hero__scroll" aria-label="Прокрутить вниз">
+        <span>Scroll</span>
+        <div class="hero__scroll-line"></div>
+      </a>
+    </div>
+
   </div>
-
-  <a href="#about" class="hero__scroll" aria-label="Прокрутить вниз">
-    <span>Scroll</span>
-    <div class="hero__scroll-line"></div>
-  </a>
 </section>
 
 <!-- ─── MARQUEE ──────────────────────────────────────── -->
 <div class="marquee" aria-hidden="true">
-  <div class="marquee__track">
+  <!-- Row 1: left →  -->
+  <div class="marquee__track marquee__track--fwd">
     <div class="marquee__item">
       Interior Design <span class="marquee__dot"></span>
       Алматы <span class="marquee__dot"></span>
@@ -100,9 +107,13 @@
       2 страны <span class="marquee__dot"></span>
       Диплом архитектора <span class="marquee__dot"></span>
       КазГАСА <span class="marquee__dot"></span>
-      Белград
+      Белград <span class="marquee__dot"></span>
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      С 2014 года <span class="marquee__dot"></span>
+      50+ проектов
     </div>
-    <div class="marquee__item">
+    <div class="marquee__item" aria-hidden="true">
       Interior Design <span class="marquee__dot"></span>
       Алматы <span class="marquee__dot"></span>
       С 2014 года <span class="marquee__dot"></span>
@@ -110,7 +121,34 @@
       2 страны <span class="marquee__dot"></span>
       Диплом архитектора <span class="marquee__dot"></span>
       КазГАСА <span class="marquee__dot"></span>
-      Белград
+      Белград <span class="marquee__dot"></span>
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      С 2014 года <span class="marquee__dot"></span>
+      50+ проектов
+    </div>
+  </div>
+  <!-- Row 2: ← right (reverse) -->
+  <div class="marquee__track marquee__track--rev">
+    <div class="marquee__item">
+      Madina Bekassyl <span class="marquee__dot"></span>
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      Жилые пространства <span class="marquee__dot"></span>
+      Коммерческие объекты <span class="marquee__dot"></span>
+      КазГАСА <span class="marquee__dot"></span>
+      Белград <span class="marquee__dot"></span>
+      Архитектурная база
+    </div>
+    <div class="marquee__item" aria-hidden="true">
+      Madina Bekassyl <span class="marquee__dot"></span>
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      Жилые пространства <span class="marquee__dot"></span>
+      Коммерческие объекты <span class="marquee__dot"></span>
+      КазГАСА <span class="marquee__dot"></span>
+      Белград <span class="marquee__dot"></span>
+      Архитектурная база
     </div>
   </div>
 </div>
@@ -182,6 +220,7 @@
 <!-- ─── PORTFOLIO ─────────────────────────────────────── -->
 <section id="portfolio" class="folio">
   <div class="folio__i">
+
     <div class="folio__hd js-reveal">
       <div>
         <span class="folio__tag">Портфолио</span>
@@ -190,79 +229,101 @@
       <span class="folio__count">6 проектов</span>
     </div>
 
-    <ul class="proj-list">
-      <li class="proj-item js-reveal" data-project="belle-view">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">01</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Belle View</div>
-            <div class="proj-item__sub">2025 &nbsp;·&nbsp; 150 м² &nbsp;·&nbsp; Современный &nbsp;·&nbsp; Реализован</div>
-          </div>
-          <span class="proj-item__badge">11 фото</span>
-          <div class="proj-item__arrow">→</div>
+    <div class="proj-grid">
+
+      <!-- 01 Belle View — full width -->
+      <div class="proj-card proj-card--full js-reveal" data-project="belle-view">
+        <div class="proj-card__img">
+          <img src="static/images/projects/belle-view/01.jpg" alt="Belle View" loading="lazy">
         </div>
-      </li>
-      <li class="proj-item js-reveal" data-project="kazybek">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">02</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Kazybek Bi</div>
-            <div class="proj-item__sub">2024 &nbsp;·&nbsp; 82 м² &nbsp;·&nbsp; Объединение 2 квартир &nbsp;·&nbsp; Реализован</div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">01</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Belle View</div>
+            <div class="proj-card__sub">2025 &nbsp;·&nbsp; 150 м² &nbsp;·&nbsp; Современный &nbsp;·&nbsp; Реализован</div>
           </div>
-          <span class="proj-item__badge">10 фото</span>
-          <div class="proj-item__arrow">→</div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
         </div>
-      </li>
-      <li class="proj-item js-reveal" data-project="arena-park">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">03</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Arena Park</div>
-            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Минимализм</div>
+      </div>
+
+      <!-- 02 Kazybek — left half -->
+      <div class="proj-card proj-card--half js-reveal" data-project="kazybek">
+        <div class="proj-card__img">
+          <img src="static/images/projects/kazybek/01.jpg" alt="Kazybek Bi" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">02</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Kazybek Bi</div>
+            <div class="proj-card__sub">2024 &nbsp;·&nbsp; 82 м² &nbsp;·&nbsp; Объединение квартир</div>
           </div>
-          <span class="proj-item__badge">13 фото</span>
-          <div class="proj-item__arrow">→</div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
         </div>
-      </li>
-      <li class="proj-item js-reveal" data-project="arena-park-2">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">04</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Arena Park II</div>
-            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</div>
+      </div>
+
+      <!-- 03 Arena Park — right half -->
+      <div class="proj-card proj-card--half js-reveal" data-project="arena-park">
+        <div class="proj-card__img">
+          <img src="static/images/projects/arena-park/01.jpg" alt="Arena Park" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">03</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Arena Park</div>
+            <div class="proj-card__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Минимализм</div>
           </div>
-          <span class="proj-item__badge">9 фото</span>
-          <div class="proj-item__arrow">→</div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
         </div>
-      </li>
-      <li class="proj-item js-reveal" data-project="arman">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">05</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Arman</div>
-            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный с классикой</div>
+      </div>
+
+      <!-- 04 Arena Park II — wider (7 cols) -->
+      <div class="proj-card proj-card--wide js-reveal" data-project="arena-park-2">
+        <div class="proj-card__img">
+          <img src="static/images/projects/arena-park-2/01.jpg" alt="Arena Park II" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">04</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Arena Park II</div>
+            <div class="proj-card__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</div>
           </div>
-          <span class="proj-item__badge">12 фото</span>
-          <div class="proj-item__arrow">→</div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
         </div>
-      </li>
-      <li class="proj-item js-reveal" data-project="office">
-        <div class="proj-item__inner">
-          <span class="proj-item__num">06</span>
-          <div class="proj-item__info">
-            <div class="proj-item__name">Office</div>
-            <div class="proj-item__sub">Коммерческий &nbsp;·&nbsp; Современный</div>
+      </div>
+
+      <!-- 05 Arman — narrower (5 cols) -->
+      <div class="proj-card proj-card--narrow js-reveal" data-project="arman">
+        <div class="proj-card__img">
+          <img src="static/images/projects/arman/01.jpg" alt="Arman" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">05</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Arman</div>
+            <div class="proj-card__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный с классикой</div>
           </div>
-          <span class="proj-item__badge">11 фото</span>
-          <div class="proj-item__arrow">→</div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
         </div>
-      </li>
-    </ul>
+      </div>
+
+      <!-- 06 Office — full width -->
+      <div class="proj-card proj-card--full js-reveal" data-project="office">
+        <div class="proj-card__img">
+          <img src="static/images/projects/office/01.jpg" alt="Office" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <span class="proj-card__num">06</span>
+          <div class="proj-card__info">
+            <div class="proj-card__name">Office</div>
+            <div class="proj-card__sub">Коммерческий &nbsp;·&nbsp; Современный</div>
+          </div>
+          <div class="proj-card__arr" aria-hidden="true">↗</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
-
-<!-- Floating hover image -->
-<div class="proj-hover-img" id="projHoverImg" aria-hidden="true"><img src="" alt=""></div>
 
 <!-- ─── SERVICES ──────────────────────────────────────── -->
 <section id="services" class="svcs">
@@ -418,11 +479,8 @@
   <div class="lb__thumbs" id="lbThumbs"></div>
 </div>
 
-<!-- Three.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<!-- Lenis smooth scroll -->
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-<!-- GSAP + ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="static/js/app.js"></script>

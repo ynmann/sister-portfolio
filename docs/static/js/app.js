@@ -21,14 +21,15 @@ function projectImages(id, count) {
   );
 }
 
-/* === MOBILE DETECTION ================================ */
-const IS_MOBILE = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+/* === DEVICE DETECTION ================================ */
+const IS_MOBILE  = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+const IS_REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* === LENIS + GSAP ==================================== */
 gsap.registerPlugin(ScrollTrigger);
 
 const lenis = new Lenis({
-  duration: 1.2,
+  duration: IS_REDUCED ? 0 : 1.2,
   easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
 });
 
@@ -36,7 +37,12 @@ gsap.ticker.add(time => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 lenis.on('scroll', () => ScrollTrigger.update());
 
-/* === THREE.JS: HERO PARTICLE SPHERE ================= */
+/* === THREE.JS: FLOATING ARCHITECTURAL FRAMES ======== */
+/*
+ * Replaces the particle sphere with floating wireframe rectangles —
+ * like framed artwork, mirrors, and panels from interior design.
+ * Elegant, on-brand, and far less generic than a sphere.
+ */
 class HeroScene {
   constructor() {
     this.canvas = document.getElementById('heroCanvas');
@@ -61,12 +67,10 @@ class HeroScene {
       _rt = setTimeout(() => this._resize(), 150);
     }, { passive: true });
 
-    // Pause when tab is hidden
     document.addEventListener('visibilitychange', () => {
       this._paused = document.hidden;
     });
 
-    // Pause when hero is scrolled off-screen
     const obs = new IntersectionObserver(([e]) => {
       this._paused = !e.isIntersecting || document.hidden;
     }, { rootMargin: '200px' });
@@ -80,72 +84,72 @@ class HeroScene {
     const H = this.canvas.clientHeight || window.innerHeight;
 
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false });
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio, IS_MOBILE ? 1 : 2));
     this.renderer.setSize(W, H, false);
 
     this.scene  = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
-    this.camera.position.z = 3.2;
+    this.camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+    this.camera.position.z = 3.5;
 
-    this._buildSphere();
-    this._buildAmbient();
+    this._buildFrames();
+    this._buildDust();
   }
 
-  _buildSphere() {
-    const N   = 2500;
-    const pos = new Float32Array(N * 3);
-    const col = new Float32Array(N * 3);
-    const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle — even coverage
+  /*
+   * Floating wireframe rectangles — picture frames, mirror outlines,
+   * architectural panels. The visual language of interior design.
+   * Each entry: [width, height, x, y, z, rotX, rotY, rotZ, opacity]
+   */
+  _buildFrames() {
+    this.group  = new THREE.Group();
+    this.frames = [];
 
-    for (let i = 0; i < N; i++) {
-      const y  = 1 - (i / (N - 1)) * 2;
-      const rr = Math.sqrt(1 - y * y);
-      const th = phi * i;
-      const R  = 1.35;
+    const defs = [
+      /* main large landscape — like a panoramic artwork   */ [3.0, 1.9,  1.1,  0.0,  0.0,  0.00,  0.22,  0.00, 0.22],
+      /* tall portrait — mirror or doorway                 */ [1.3, 2.3, -0.9,  0.1, -0.5,  0.05, -0.16,  0.03, 0.15],
+      /* medium landscape — artwork in background          */ [2.4, 1.5,  0.8, -0.8, -1.3,  0.12,  0.07, -0.05, 0.10],
+      /* small accent square — decorative panel            */ [0.8, 1.1,  2.1,  0.7, -0.2, -0.04,  0.42,  0.06, 0.13],
+      /* thin horizontal bar — shelf or skirting board     */ [4.0, 0.5,  0.0,  1.5, -0.9, -0.07,  0.00,  0.00, 0.07],
+      /* distant tall frame — layered depth                */ [1.7, 2.6, -0.2, -0.1, -2.0,  0.06, -0.09,  0.00, 0.06],
+    ];
 
-      pos[i*3]   = Math.cos(th) * rr * R;
-      pos[i*3+1] = y * R;
-      pos[i*3+2] = Math.sin(th) * rr * R;
+    defs.forEach(([w, h, x, y, z, rx, ry, rz, opacity]) => {
+      const geo  = new THREE.EdgesGeometry(new THREE.PlaneGeometry(w, h));
+      const mat  = new THREE.LineBasicMaterial({ color: 0xB8883A, transparent: true, opacity });
+      const mesh = new THREE.LineSegments(geo, mat);
+      mesh.position.set(x, y, z);
+      mesh.rotation.set(rx, ry, rz);
+      mesh.userData = { rx, ry, rz };
+      this.frames.push(mesh);
+      this.group.add(mesh);
+    });
 
-      const t    = Math.random();
-      col[i*3]   = (0.55 + 0.45 * t) * (184 / 255);
-      col[i*3+1] = (0.55 + 0.45 * t) * (136 / 255);
-      col[i*3+2] = (0.35 + 0.65 * t) * ( 58 / 255);
-    }
+    // Subtle outer glow on the main frame (slightly larger, very low opacity)
+    const glowGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(3.25, 2.1));
+    const glowMat = new THREE.LineBasicMaterial({ color: 0xD4A85A, transparent: true, opacity: 0.06 });
+    const glow    = new THREE.LineSegments(glowGeo, glowMat);
+    glow.position.copy(this.frames[0].position);
+    glow.rotation.copy(this.frames[0].rotation);
+    this.group.add(glow);
 
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
-
-    this.sphere = new THREE.Points(geo, new THREE.PointsMaterial({
-      size: 0.018, vertexColors: true, transparent: true, opacity: 0.88, sizeAttenuation: true,
-    }));
-    this.scene.add(this.sphere);
+    this.scene.add(this.group);
   }
 
-  _buildAmbient() {
-    const N   = 600;
+  /* Fine golden dust — like suspended particles in a sunlit room */
+  _buildDust() {
+    const N   = IS_MOBILE ? 100 : 260;
     const pos = new Float32Array(N * 3);
-    const col = new Float32Array(N * 3);
-
     for (let i = 0; i < N; i++) {
-      pos[i*3]   = (Math.random() - 0.5) * 9;
-      pos[i*3+1] = (Math.random() - 0.5) * 9;
-      pos[i*3+2] = (Math.random() - 0.5) * 5;
-
-      col[i*3]   = 0.6  + Math.random() * 0.2;
-      col[i*3+1] = 0.45 + Math.random() * 0.15;
-      col[i*3+2] = 0.12 + Math.random() * 0.12;
+      pos[i*3]   = (Math.random() - 0.5) * 8;
+      pos[i*3+1] = (Math.random() - 0.5) * 6;
+      pos[i*3+2] = (Math.random() - 0.5) * 4;
     }
-
-    const geo = new THREE.BufferGeometry();
+    const geo  = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
-
-    this.ambient = new THREE.Points(geo, new THREE.PointsMaterial({
-      size: 0.006, vertexColors: true, transparent: true, opacity: 0.38, sizeAttenuation: true,
+    this.dust  = new THREE.Points(geo, new THREE.PointsMaterial({
+      size: 0.007, color: 0xD4A85A, transparent: true, opacity: 0.30,
     }));
-    this.scene.add(this.ambient);
+    this.scene.add(this.dust);
   }
 
   _resize() {
@@ -160,17 +164,26 @@ class HeroScene {
     requestAnimationFrame(() => this._loop());
     if (this._paused) return;
 
-    this.time += 0.005;
-    this.target.x += (this.mouse.x * 0.25 - this.target.x) * 0.025;
-    this.target.y += (this.mouse.y * 0.25 - this.target.y) * 0.025;
+    const dt = IS_REDUCED ? 0 : 0.003;
+    this.time += dt;
 
-    if (this.sphere) {
-      this.sphere.rotation.y = this.time * 0.12 + this.target.x;
-      this.sphere.rotation.x = this.target.y * 0.45;
-      this.sphere.scale.setScalar(1 + Math.sin(this.time * 0.7) * 0.012);
-    }
-    if (this.ambient) {
-      this.ambient.rotation.y = this.time * 0.025;
+    this.target.x += (this.mouse.x * 0.16 - this.target.x) * 0.022;
+    this.target.y += (this.mouse.y * 0.16 - this.target.y) * 0.022;
+
+    // Whole group slowly rotates + follows mouse
+    this.group.rotation.y = this.time * 0.045 + this.target.x * 0.75;
+    this.group.rotation.x = this.target.y * 0.22;
+
+    // Individual frames breathe independently
+    this.frames.forEach((f, i) => {
+      const { rx, ry, rz } = f.userData;
+      f.rotation.y = ry + Math.sin(this.time * 0.32 + i * 0.95) * 0.038;
+      f.rotation.x = rx + Math.sin(this.time * 0.22 + i * 1.40) * 0.024;
+    });
+
+    if (this.dust) {
+      this.dust.rotation.y = this.time * 0.011;
+      this.dust.rotation.x = Math.sin(this.time * 0.09) * 0.038;
     }
 
     this.renderer.render(this.scene, this.camera);
@@ -216,19 +229,17 @@ class ContactScene {
     this.camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100);
     this.camera.position.z = 3;
 
-    const N   = 900;
+    const N   = 700;
     const pos = new Float32Array(N * 3);
     for (let i = 0; i < N; i++) {
       pos[i*3]   = (Math.random() - 0.5) * 12;
       pos[i*3+1] = (Math.random() - 0.5) * 8;
       pos[i*3+2] = (Math.random() - 0.5) * 4;
     }
-
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-
     this.points = new THREE.Points(geo, new THREE.PointsMaterial({
-      size: 0.01, color: 0xB8883A, transparent: true, opacity: 0.28, sizeAttenuation: true,
+      size: 0.009, color: 0xB8883A, transparent: true, opacity: 0.25,
     }));
     this.scene.add(this.points);
   }
@@ -246,8 +257,8 @@ class ContactScene {
     if (this._paused) return;
     this.time += 0.003;
     if (this.points) {
-      this.points.rotation.y = this.time * 0.08;
-      this.points.rotation.x = Math.sin(this.time * 0.15) * 0.08;
+      this.points.rotation.y = this.time * 0.07;
+      this.points.rotation.x = Math.sin(this.time * 0.13) * 0.07;
     }
     this.renderer.render(this.scene, this.camera);
   }
@@ -272,7 +283,7 @@ class ContactScene {
       setTimeout(() => {
         loader.classList.add('out');
         loader.addEventListener('transitionend', onPageReady, { once: true });
-        setTimeout(onPageReady, 1400); // fallback
+        setTimeout(onPageReady, 1400);
       }, 350);
     }
   }, 22);
@@ -291,98 +302,105 @@ function onPageReady() {
   initParallax();
   initStatsCountUp();
 
+  // Skip Three.js on touch/small-screen to save battery
   if (!IS_MOBILE) {
     new HeroScene();
     new ContactScene();
   }
 }
 
-/* === HERO ENTRANCE (clip-reveal + fade) ============== */
+/* === HERO ENTRANCE =================================== */
 function playHeroAnims() {
+  if (IS_REDUCED) {
+    // Instant reveal for reduced-motion users
+    gsap.set(['.hero__tag', '.hero__sig', '.hero__title-line span',
+              '.hero__tagline', '.hero__meta', '.hero__scroll',
+              '.hero__feat'], { clearProps: 'all' });
+    return;
+  }
+
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
   tl
-    .fromTo('.hero__tag',
-      { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 0.9 })
-    .fromTo('.hero__title-line span',
-      { yPercent: 115 },
-      { yPercent: 0, duration: 1.25, stagger: 0.13 },
-      '-=0.6')
-    .fromTo('.hero__sig',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.85 },
-      '-=0.55')
-    .fromTo('.hero__tagline',
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.8 },
-      '-=0.4')
-    .fromTo('.hero__meta',
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.7 },
-      '-=0.35')
-    .fromTo('.hero__scroll',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.6 },
-      '-=0.2');
+    .fromTo('.hero__tag',            { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.85 })
+    .fromTo('.hero__sig',            { opacity: 0 },        { opacity: 1, duration: 0.7 }, '-=0.4')
+    .fromTo('.hero__title-line span',{ yPercent: 115 },     { yPercent: 0, duration: 1.3, stagger: 0.15 }, '-=0.35')
+    .fromTo('.hero__tagline',        { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.85 }, '-=0.55')
+    .fromTo('.hero__meta',           { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.75 }, '-=0.45')
+    .fromTo('.hero__scroll',         { opacity: 0 },        { opacity: 1, duration: 0.6 }, '-=0.25');
+
+  // Clip-path reveal for floating project image
+  gsap.fromTo('.hero__feat',
+    { clipPath: 'inset(100% 0 0 0)' },
+    { clipPath: 'inset(0% 0 0 0)', duration: 1.5, ease: 'power4.inOut', delay: 1.0 }
+  );
 }
 
 /* === HERO SCROLL-OUT PARALLAX ======================== */
 function initHeroScrollOut() {
-  // Content drifts up as user scrolls away from hero
-  gsap.to('.hero__content', {
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1.4,
-    },
-    y: -90,
-    opacity: 0.15,
-    ease: 'none',
+  if (IS_REDUCED) return;
+
+  // Title area drifts up
+  gsap.to('.hero__center', {
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.4 },
+    y: -90, ease: 'none',
   });
 
-  // Scroll indicator fades out early
-  gsap.to('.hero__scroll', {
-    scrollTrigger: {
-      trigger: '.hero',
-      start: '12% top',
-      end: '35% top',
-      scrub: 1,
-    },
-    opacity: 0,
-    ease: 'none',
+  // Eyebrow + foot fade as hero exits
+  gsap.to('.hero__eyebrow, .hero__foot', {
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: '55% top', scrub: 1.2 },
+    opacity: 0, ease: 'none',
+  });
+
+  // Featured image parallax
+  gsap.to('.hero__feat img', {
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.2 },
+    y: -80, ease: 'none',
   });
 }
 
 /* === SCROLL REVEAL ==================================== */
 function initScrollReveal() {
-  // Process steps: staggered group instead of individual
+  // Portfolio cards: stagger as a group
+  const cards = document.querySelectorAll('.proj-card.js-reveal');
+  cards.forEach(el => el.classList.remove('js-reveal'));
+  if (cards.length) {
+    gsap.fromTo(cards,
+      { opacity: 0, y: IS_REDUCED ? 0 : 55 },
+      {
+        opacity: 1, y: 0, duration: 1.1, ease: 'power3.out',
+        stagger: IS_REDUCED ? 0 : 0.07,
+        scrollTrigger: { trigger: '.proj-grid', start: 'top 88%', toggleActions: 'play none none none' },
+      }
+    );
+  }
+
+  // Process steps: stagger
   const steps = document.querySelectorAll('.pstep.js-reveal');
   steps.forEach(el => el.classList.remove('js-reveal'));
   if (steps.length) {
     gsap.fromTo(steps,
-      { opacity: 0, y: 28 },
+      { opacity: 0, y: IS_REDUCED ? 0 : 28 },
       {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', stagger: IS_REDUCED ? 0 : 0.1,
         scrollTrigger: { trigger: '.proc__steps', start: 'top 82%', toggleActions: 'play none none none' },
       }
     );
   }
 
-  // Services cards: staggered by row
+  // Services cards: stagger
   const svcs = document.querySelectorAll('.svc.js-reveal');
   svcs.forEach(el => el.classList.remove('js-reveal'));
   if (svcs.length) {
     gsap.fromTo(svcs,
-      { opacity: 0, y: 32 },
+      { opacity: 0, y: IS_REDUCED ? 0 : 32 },
       {
-        opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: 0.12,
+        opacity: 1, y: 0, duration: 0.9, ease: 'power2.out', stagger: IS_REDUCED ? 0 : 0.12,
         scrollTrigger: { trigger: '.svcs__grid', start: 'top 82%', toggleActions: 'play none none none' },
       }
     );
   }
 
-  // Everything else: fade+rise or slide-left for tags
+  // Everything else individually
   document.querySelectorAll('.js-reveal').forEach(el => {
     const isTag = el.classList.contains('about__tag') ||
                   el.classList.contains('svcs__tag')  ||
@@ -391,7 +409,7 @@ function initScrollReveal() {
 
     if (isTag) {
       gsap.fromTo(el,
-        { opacity: 0, x: -22 },
+        { opacity: 0, x: IS_REDUCED ? 0 : -22 },
         {
           opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
           scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
@@ -399,7 +417,7 @@ function initScrollReveal() {
       );
     } else {
       gsap.fromTo(el,
-        { opacity: 0, y: 40 },
+        { opacity: 0, y: IS_REDUCED ? 0 : 40 },
         {
           opacity: 1, y: 0, duration: 1, ease: 'power2.out',
           scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
@@ -411,15 +429,13 @@ function initScrollReveal() {
 
 /* === PORTRAIT PARALLAX ================================ */
 function initParallax() {
+  if (IS_REDUCED || IS_MOBILE) return;
   document.querySelectorAll('[data-parallax]').forEach(img => {
     gsap.to(img, {
-      y: -70,
-      ease: 'none',
+      y: -70, ease: 'none',
       scrollTrigger: {
         trigger: img.closest('section') || img.parentElement,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1.5,
+        start: 'top bottom', end: 'bottom top', scrub: 1.5,
       },
     });
   });
@@ -438,9 +454,7 @@ function initStatsCountUp() {
 
     const before = text.slice(0, text.indexOf(m[1]));
     const after  = text.slice(text.indexOf(m[1]) + m[1].length);
-
-    // Russian thousands separator: space
-    const fmt = n => {
+    const fmt    = n => {
       const s = String(Math.round(n));
       return s.length > 3 ? s.slice(0, -3) + ' ' + s.slice(-3) : s;
     };
@@ -448,10 +462,9 @@ function initStatsCountUp() {
     el.textContent = before + '0' + after;
 
     ScrollTrigger.create({
-      trigger: el,
-      start: 'top 85%',
-      once: true,
+      trigger: el, start: 'top 85%', once: true,
       onEnter: () => {
+        if (IS_REDUCED) { el.textContent = before + fmt(end) + after; return; }
         const obj = { n: 0 };
         gsap.to(obj, {
           n: end, duration: 1.6, ease: 'power2.out',
@@ -466,7 +479,8 @@ function initStatsCountUp() {
 (function initCursor() {
   const dot  = document.getElementById('curDot');
   const ring = document.getElementById('curRing');
-  if (!dot || !ring) return;
+  // Only on non-touch devices
+  if (!dot || !ring || IS_MOBILE) return;
 
   let mx = 0, my = 0, rx = 0, ry = 0;
 
@@ -485,7 +499,7 @@ function initStatsCountUp() {
     requestAnimationFrame(trackRing);
   })();
 
-  document.querySelectorAll('a, button, .proj-item, .svc, .gal__item').forEach(el => {
+  document.querySelectorAll('a, button, .proj-card, .svc, .gal__item').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
   });
@@ -516,46 +530,12 @@ function initStatsCountUp() {
   }
 })();
 
-/* === MARQUEE ========================================= */
-(function initMarquee() {
-  const wrap = document.querySelector('.marquee__track')?.parentElement;
-  if (!wrap) return;
-  if (wrap.querySelectorAll('.marquee__track').length < 2) {
-    wrap.appendChild(wrap.querySelector('.marquee__track').cloneNode(true));
-  }
-})();
-
-/* === PROJECT LIST + HOVER IMAGE ===================== */
-(function initProjectList() {
-  const hoverImg = document.getElementById('projHoverImg');
-  const hoverEl  = hoverImg?.querySelector('img');
-  let ticking = false, mouseX = 0, mouseY = 0;
-
-  if (hoverImg) {
-    window.addEventListener('mousemove', e => {
-      mouseX = e.clientX; mouseY = e.clientY;
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          hoverImg.style.left = mouseX + 30 + 'px';
-          hoverImg.style.top  = mouseY - 120 + 'px';
-          ticking = false;
-        });
-        ticking = true;
-      }
-    }, { passive: true });
-  }
-
-  document.querySelectorAll('.proj-item').forEach(item => {
-    const id = item.dataset.project;
-    const p  = PROJECTS[id];
-    if (!p) return;
-
-    item.addEventListener('mouseenter', () => {
-      if (hoverEl) hoverEl.src = `static/images/projects/${id}/01.jpg`;
-      hoverImg?.classList.add('visible');
-    });
-    item.addEventListener('mouseleave', () => hoverImg?.classList.remove('visible'));
-    item.addEventListener('click', () => openGallery(id));
+/* === PROJECT CARDS =================================== */
+(function initProjectCards() {
+  document.querySelectorAll('.proj-card').forEach(card => {
+    const id = card.dataset.project;
+    if (!PROJECTS[id]) return;
+    card.addEventListener('click', () => openGallery(id));
   });
 })();
 
@@ -584,7 +564,7 @@ function openGallery(id) {
   document.body.style.overflow = 'hidden';
 
   const body = modal.querySelector('.gal__body');
-  const io = new IntersectionObserver(entries => {
+  const io   = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); }
     });
