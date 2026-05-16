@@ -8,690 +8,39 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
-  <style>
-    /* ─── Tokens ─────────────────────────────────────────── */
-    :root {
-      --bg:       #F5F1EB;
-      --bg-warm:  #EDE7DA;
-      --bg-dark:  #161410;
-      --text:     #18160F;
-      --muted:    #7A7060;
-      --gold:     #B89060;
-      --gold-dim: #9A7448;
-      --border:   #DDD5C4;
-      --white:    #FFFFFF;
-
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans:  'Inter', system-ui, sans-serif;
-
-      --pad:   clamp(1.25rem, 5vw, 5rem);
-      --max:   1440px;
-      --nav-h: 72px;
-      --ease:  cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    /* ─── Reset ──────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 16px;
-      font-weight: 300;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-    img, video { display: block; max-width: 100%; height: auto; }
-    a { color: inherit; text-decoration: none; }
-    button { background: none; border: none; cursor: pointer; font: inherit; }
-
-    /* ─── Custom cursor ──────────────────────────────────── */
-    .cur-ring {
-      position: fixed; top: 0; left: 0;
-      width: 36px; height: 36px;
-      border: 1px solid rgba(184,144,96,.5);
-      border-radius: 50%;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width .22s var(--ease), height .22s var(--ease),
-                  border-color .22s, background .22s, opacity .3s;
-      will-change: left, top;
-      opacity: 0;
-    }
-    .cur-dot {
-      position: fixed; top: 0; left: 0;
-      width: 5px; height: 5px;
-      background: var(--gold);
-      border-radius: 50%;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%, -50%);
-      will-change: left, top;
-      opacity: 0; transition: opacity .3s;
-    }
-    .has-cursor .cur-ring,
-    .has-cursor .cur-dot { opacity: 1; }
-    .cur-hover .cur-ring {
-      width: 52px; height: 52px;
-      border-color: rgba(184,144,96,.7);
-      background: rgba(184,144,96,.04);
-    }
-
-    /* ─── Helpers ────────────────────────────────────────── */
-    .label {
-      display: inline-block;
-      font-size: 10px; font-weight: 500;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 1.5rem;
-    }
-    .r {
-      opacity: 0; transform: translateY(26px);
-      transition: opacity .75s var(--ease), transform .75s var(--ease);
-    }
-    .r.d1 { transition-delay: .1s; }
-    .r.d2 { transition-delay: .2s; }
-    .r.d3 { transition-delay: .3s; }
-    .r.on { opacity: 1; transform: none; }
-
-    /* ─── Nav ────────────────────────────────────────────── */
-    .nav {
-      position: fixed; inset: 0 0 auto; z-index: 200;
-      height: var(--nav-h);
-      transition: background .35s var(--ease), box-shadow .35s var(--ease);
-    }
-    .nav.s {
-      background: rgba(245,241,235,.94);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 1px 0 var(--border);
-    }
-    .nav__i {
-      max-width: var(--max); margin: auto;
-      padding: 0 var(--pad); height: 100%;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav__logo { height: 30px; }
-    .nav__logo img { height: 100%; width: auto; }
-    .nav__links { display: flex; gap: 2.5rem; align-items: center; }
-    .nav__lk {
-      font-size: 12px; letter-spacing: .06em; color: var(--text);
-      position: relative; transition: color .2s;
-    }
-    .nav__lk::after {
-      content: ''; position: absolute;
-      bottom: -3px; left: 0; right: 0; height: 1px;
-      background: var(--gold);
-      transform: scaleX(0); transform-origin: right;
-      transition: transform .3s var(--ease);
-    }
-    .nav__lk:hover { color: var(--gold); }
-    .nav__lk:hover::after { transform: scaleX(1); transform-origin: left; }
-    .nav__cta {
-      font-size: 11px; font-weight: 500;
-      letter-spacing: .16em; text-transform: uppercase;
-      border: 1px solid var(--text); padding: .45rem 1.25rem;
-      transition: background .2s, color .2s;
-    }
-    .nav__cta:hover { background: var(--text); color: var(--bg); }
-    .nav__burger { display: none; flex-direction: column; gap: 5px; width: 28px; }
-    .nav__burger span {
-      display: block; height: 1px; background: var(--text);
-      transition: transform .3s, opacity .3s;
-    }
-    .nav__burger.o span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
-    .nav__burger.o span:nth-child(2) { opacity: 0; }
-    .nav__burger.o span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
-
-    /* ─── Mobile menu ────────────────────────────────────── */
-    .mob {
-      position: fixed; inset: 0; z-index: 190;
-      background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 2rem;
-      transform: translateX(100%);
-      transition: transform .45s var(--ease);
-    }
-    .mob.o { transform: none; }
-    .mob__lk {
-      font-family: var(--serif); font-size: clamp(2rem, 7vw, 3rem);
-      font-weight: 300; transition: color .2s;
-    }
-    .mob__lk:hover { color: var(--gold); }
-
-    /* ─── Hero ───────────────────────────────────────────── */
-    .hero {
-      display: grid; grid-template-columns: 1fr 1fr;
-      min-height: 100vh; overflow: hidden;
-    }
-    .hero__l {
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: calc(var(--nav-h) + 5rem) var(--pad) 5rem;
-      position: relative; z-index: 2;
-    }
-    .hero__eyebrow {
-      font-size: 10px; font-weight: 500;
-      letter-spacing: .25em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 2rem;
-      opacity: 0; transform: translateY(18px);
-      animation: up .8s var(--ease) .15s forwards;
-    }
-    .hero__title {
-      font-family: var(--serif);
-      font-size: clamp(4.5rem, 7.5vw, 9rem);
-      font-weight: 300; line-height: .88;
-      margin-bottom: 2.25rem;
-      opacity: 0; transform: translateY(30px);
-      animation: up .9s var(--ease) .3s forwards;
-    }
-    .hero__title em { font-style: italic; color: var(--gold); display: block; }
-    .hero__sig {
-      width: clamp(160px, 18vw, 250px);
-      margin-bottom: 2.5rem;
-      opacity: 0; animation: fi 1.1s var(--ease) .55s forwards;
-    }
-    .hero__sig video,
-    .hero__sig img { width: 100%; }
-    .hero__tagline {
-      font-family: var(--serif);
-      font-size: clamp(1.05rem, 1.4vw, 1.35rem);
-      font-style: italic; font-weight: 300;
-      color: var(--muted); margin-bottom: 2.25rem;
-      opacity: 0; transform: translateY(18px);
-      animation: up .8s var(--ease) .7s forwards;
-    }
-    .hero__meta {
-      display: flex; align-items: center; gap: .85rem;
-      font-size: 11px; letter-spacing: .09em; color: var(--muted);
-      opacity: 0; animation: fi .8s var(--ease) .88s forwards;
-    }
-    .hero__dot {
-      width: 3px; height: 3px;
-      border-radius: 50%; background: var(--gold); flex-shrink: 0;
-    }
-    .hero__r { position: relative; overflow: hidden; }
-    .hero__r img {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-    }
-    .hero__r::before {
-      content: ''; position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(to right, var(--bg) 0%, transparent 28%);
-    }
-    .hero__scroll {
-      position: absolute; bottom: 2.5rem; left: var(--pad);
-      display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;
-      font-size: 9px; font-weight: 500;
-      letter-spacing: .22em; text-transform: uppercase;
-      color: var(--muted); z-index: 3;
-      opacity: 0; animation: fi 1s var(--ease) 1.2s forwards;
-    }
-    .hero__scroll-ln {
-      width: 1px; height: 56px;
-      background: var(--border); overflow: hidden; position: relative;
-    }
-    .hero__scroll-ln::after {
-      content: '';
-      position: absolute; top: -100%; left: 0; right: 0; height: 100%;
-      background: var(--gold);
-      animation: sl 2s ease-in-out 1.6s infinite;
-    }
-    @keyframes up { to { opacity: 1; transform: none; } }
-    @keyframes fi { to { opacity: 1; } }
-    @keyframes sl { 0% { top: -100%; } 100% { top: 100%; } }
-
-    /* ─── Stats ──────────────────────────────────────────── */
-    .stats { background: var(--bg-dark); padding: 3.5rem var(--pad); }
-    .stats__i {
-      max-width: var(--max); margin: auto;
-      display: grid; grid-template-columns: repeat(4, 1fr);
-    }
-    .stats__cell {
-      text-align: center; padding: 0 1.5rem;
-      border-left: 1px solid rgba(255,255,255,.08);
-    }
-    .stats__cell:first-child { border-left: none; }
-    .stats__n {
-      display: block; font-family: var(--serif);
-      font-size: clamp(2rem, 3.5vw, 3.25rem);
-      font-weight: 300; color: var(--gold);
-      line-height: 1; margin-bottom: .5rem;
-    }
-    .stats__l {
-      display: block; font-size: 10px;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: rgba(245,241,235,.4);
-    }
-
-    /* ─── About ──────────────────────────────────────────── */
-    .about {
-      padding: 9rem var(--pad);
-      max-width: var(--max); margin: auto;
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(3rem, 6vw, 7rem); align-items: center;
-    }
-    .about__img { position: relative; aspect-ratio: 3/4; overflow: hidden; }
-    .about__img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform .8s var(--ease);
-    }
-    .about__img:hover img { transform: scale(1.04); }
-    .about__img-frame {
-      position: absolute; inset: 0;
-      border: 1px solid var(--border);
-      transform: translate(14px, 14px); pointer-events: none;
-    }
-    .about__h {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
-      font-weight: 300; line-height: 1.15; margin-bottom: 2rem;
-    }
-    .about__h em { font-style: italic; color: var(--gold); }
-    .about__body { margin-bottom: 2.25rem; }
-    .about__body p {
-      font-size: 14.5px; color: var(--muted);
-      line-height: 1.85; margin-bottom: 1.1rem;
-    }
-    .about__creds { display: flex; flex-direction: column; gap: .65rem; margin-bottom: 2.75rem; }
-    .about__cred {
-      display: flex; align-items: center; gap: .75rem;
-      font-size: 12px; letter-spacing: .06em; color: var(--muted);
-    }
-    .about__cred::before {
-      content: ''; width: 22px; height: 1px;
-      background: var(--gold); flex-shrink: 0;
-    }
-
-    /* ─── Buttons ────────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: .65rem;
-      font-size: 11px; font-weight: 500;
-      letter-spacing: .18em; text-transform: uppercase;
-      transition: all .25s;
-    }
-    .btn::after { content: '→'; transition: transform .25s; }
-    .btn:hover::after { transform: translateX(5px); }
-    .btn--border {
-      padding: .9rem 2rem;
-      border: 1px solid var(--text); color: var(--text);
-    }
-    .btn--border:hover { background: var(--text); color: var(--bg); }
-    .btn--gold {
-      padding: .9rem 2rem;
-      background: var(--gold); border: 1px solid var(--gold); color: var(--white);
-    }
-    .btn--gold:hover { background: var(--gold-dim); border-color: var(--gold-dim); }
-
-    /* ─── Services ───────────────────────────────────────── */
-    .svcs { background: var(--bg-warm); padding: 9rem var(--pad); }
-    .svcs__i { max-width: var(--max); margin: auto; }
-    .svcs__hd { margin-bottom: 4.5rem; }
-    .svcs__hd h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
-      font-weight: 300; line-height: 1.15;
-    }
-    .svcs__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
-    .svc {
-      background: var(--white); padding: 3rem;
-      display: flex; flex-direction: column;
-      transition: background .3s, color .3s;
-    }
-    .svc:hover { background: var(--bg-dark); color: var(--bg); }
-    .svc__n {
-      font-family: var(--serif); font-size: 4.5rem;
-      font-weight: 300; line-height: 1; color: var(--border);
-      margin-bottom: 1.5rem; transition: color .3s;
-    }
-    .svc:hover .svc__n { color: rgba(255,255,255,.05); }
-    .svc__title {
-      font-family: var(--serif); font-size: 1.55rem;
-      font-weight: 400; margin-bottom: .9rem; line-height: 1.25;
-    }
-    .svc__desc {
-      font-size: 13.5px; line-height: 1.8;
-      color: var(--muted); flex: 1; margin-bottom: 1.75rem;
-      transition: color .3s;
-    }
-    .svc:hover .svc__desc { color: rgba(245,241,235,.45); }
-    .svc__price {
-      font-family: var(--serif);
-      font-size: 1.15rem; font-weight: 500; color: var(--gold);
-    }
-
-    /* ─── Portfolio ──────────────────────────────────────── */
-    .folio { padding: 9rem var(--pad); max-width: var(--max); margin: auto; }
-    .folio__hd {
-      display: flex; justify-content: space-between;
-      align-items: flex-end; margin-bottom: 3.5rem;
-    }
-    .folio__hd h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
-      font-weight: 300; line-height: 1.15;
-    }
-    .folio__count {
-      font-size: 11px; letter-spacing: .12em;
-      color: var(--muted); text-transform: uppercase; padding-bottom: .5rem;
-    }
-    .folio__grid {
-      display: grid; grid-template-columns: repeat(12, 1fr);
-      grid-auto-rows: 260px; gap: 10px;
-    }
-    .pi:nth-child(1) { grid-column: span 7; grid-row: span 2; }
-    .pi:nth-child(2) { grid-column: span 5; }
-    .pi:nth-child(3) { grid-column: span 5; }
-    .pi:nth-child(4) { grid-column: span 4; }
-    .pi:nth-child(5) { grid-column: span 4; }
-    .pi:nth-child(6) { grid-column: span 4; }
-    .pi {
-      position: relative; overflow: hidden; cursor: pointer;
-      background: var(--bg-warm);
-    }
-    .pi__img { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .pi__img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform .85s var(--ease);
-    }
-    .pi:hover .pi__img img { transform: scale(1.07); }
-    .pi__ov {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top,
-        rgba(14,11,7,.9) 0%, rgba(14,11,7,.25) 50%, transparent 100%);
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 1.75rem 2rem;
-      opacity: 0; transition: opacity .4s var(--ease);
-    }
-    .pi:hover .pi__ov { opacity: 1; }
-    .pi__name {
-      font-family: var(--serif); font-size: 1.6rem;
-      font-weight: 300; color: var(--white); line-height: 1.2; margin-bottom: .25rem;
-    }
-    .pi__sub {
-      font-size: 11px; letter-spacing: .09em;
-      color: rgba(255,255,255,.5); margin-bottom: 1rem;
-    }
-    .pi__cta {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-size: 10px; font-weight: 500;
-      letter-spacing: .18em; text-transform: uppercase;
-      color: var(--gold); transition: gap .25s;
-    }
-    .pi__cta::after { content: '→'; }
-    .pi:hover .pi__cta { gap: .75rem; }
-    .pi__badge {
-      position: absolute; top: 1rem; right: 1rem;
-      font-size: 10px; font-weight: 500; letter-spacing: .1em;
-      background: rgba(245,241,235,.12);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      color: transparent; padding: .3rem .7rem;
-      transition: color .3s;
-    }
-    .pi:hover .pi__badge { color: rgba(255,255,255,.8); }
-
-    /* ─── Process ────────────────────────────────────────── */
-    .proc { background: var(--bg-dark); padding: 9rem var(--pad); }
-    .proc__i { max-width: var(--max); margin: auto; }
-    .proc__hd { margin-bottom: 5rem; }
-    .proc__hd .label { color: var(--gold); }
-    .proc__hd h2 {
-      font-family: var(--serif);
-      font-size: clamp(2.4rem, 3.8vw, 3.5rem);
-      font-weight: 300; line-height: 1.15; color: var(--bg);
-    }
-    .proc__hd h2 em { font-style: italic; color: var(--gold); }
-    .proc__steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; }
-    .pstep { border-top: 1px solid rgba(255,255,255,.08); padding-top: 2rem; }
-    .pstep__n {
-      font-family: var(--serif); font-size: 3.5rem;
-      font-weight: 300; color: var(--gold); line-height: 1; margin-bottom: 1.1rem;
-    }
-    .pstep__t {
-      font-size: .9rem; font-weight: 500;
-      letter-spacing: .06em; color: var(--bg); margin-bottom: .75rem;
-    }
-    .pstep__d { font-size: 13.5px; line-height: 1.8; color: rgba(245,241,235,.4); }
-
-    /* ─── Contact ────────────────────────────────────────── */
-    .contact { background: var(--bg-warm); padding: 9rem var(--pad); }
-    .contact__i {
-      max-width: var(--max); margin: auto;
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(3rem, 8vw, 9rem); align-items: start;
-    }
-    .contact__h {
-      font-family: var(--serif);
-      font-size: clamp(2.5rem, 4.5vw, 4.5rem);
-      font-weight: 300; line-height: 1.08; margin-bottom: 1.75rem;
-    }
-    .contact__h em { font-style: italic; color: var(--gold); }
-    .contact__p {
-      font-size: 14px; color: var(--muted);
-      line-height: 1.85; margin-bottom: 2.75rem;
-    }
-    .contact__r { padding-top: 3.5rem; }
-    .contact__items { display: flex; flex-direction: column; gap: 2.25rem; }
-    .ci__label {
-      font-size: 9px; font-weight: 600;
-      letter-spacing: .24em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: .45rem;
-    }
-    .ci__val {
-      font-family: var(--serif); font-size: 1.25rem;
-      font-weight: 400; color: var(--text);
-    }
-    .ci__val a { transition: color .2s; }
-    .ci__val a:hover { color: var(--gold); }
-
-    /* ─── Footer ─────────────────────────────────────────── */
-    .ft { background: var(--bg-dark); padding: 2.25rem var(--pad); }
-    .ft__i {
-      max-width: var(--max); margin: auto;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .ft__logo img { height: 26px; width: auto; opacity: .5; }
-    .ft__copy { font-size: 11px; letter-spacing: .05em; color: rgba(245,241,235,.28); }
-    .ft__links { display: flex; gap: 2rem; }
-    .ft__lk {
-      font-size: 11px; letter-spacing: .05em;
-      color: rgba(245,241,235,.28); transition: color .2s;
-    }
-    .ft__lk:hover { color: var(--gold); }
-
-    /* ─── Gallery modal ──────────────────────────────────── */
-    .gal {
-      position: fixed; inset: 0; z-index: 300;
-      background: var(--bg-dark);
-      transform: translateY(100%);
-      transition: transform .6s var(--ease);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-    }
-    .gal.open { transform: none; }
-
-    .gal__head {
-      flex-shrink: 0;
-      background: rgba(22,20,16,.92);
-      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      padding: 1.25rem 2rem;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 2rem;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-    .gal__name {
-      font-family: var(--serif); font-size: 1.65rem;
-      font-weight: 300; color: var(--white); line-height: 1.1;
-    }
-    .gal__meta {
-      font-size: 11px; letter-spacing: .07em;
-      color: rgba(255,255,255,.35); margin-top: .2rem;
-    }
-    .gal__close {
-      flex-shrink: 0; width: 44px; height: 44px;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,.45); font-size: 1.2rem;
-      transition: color .2s, transform .35s var(--ease);
-    }
-    .gal__close:hover { color: var(--white); transform: rotate(90deg); }
-
-    .gal__body {
-      flex: 1; overflow-y: auto;
-      padding: 1.5rem 2rem 3rem;
-    }
-    .gal__grid { columns: 3; column-gap: 8px; }
-    .gal__item {
-      break-inside: avoid; margin-bottom: 8px;
-      overflow: hidden; cursor: zoom-in; position: relative;
-      opacity: 0; transform: translateY(16px);
-      transition: opacity .5s var(--ease), transform .5s var(--ease);
-    }
-    .gal__item.vis { opacity: 1; transform: none; }
-    .gal__item img {
-      width: 100%; height: auto; display: block;
-      transition: transform .6s var(--ease);
-    }
-    .gal__item:hover img { transform: scale(1.04); }
-    .gal__item::after {
-      content: ''; position: absolute; inset: 0;
-      background: rgba(184,144,96,.06);
-      opacity: 0; transition: opacity .25s;
-    }
-    .gal__item:hover::after { opacity: 1; }
-
-    /* ─── Lightbox ───────────────────────────────────────── */
-    .lb {
-      position: fixed; inset: 0; z-index: 400;
-      background: rgba(9,7,5,.97);
-      opacity: 0; visibility: hidden;
-      transition: opacity .28s, visibility .28s;
-      display: flex; flex-direction: column;
-    }
-    .lb.open { opacity: 1; visibility: visible; }
-
-    .lb__head {
-      flex-shrink: 0; padding: 1.25rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .lb__counter {
-      font-size: 12px; letter-spacing: .12em;
-      color: rgba(255,255,255,.3);
-    }
-    .lb__close {
-      width: 44px; height: 44px;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,.38); font-size: 1.1rem;
-      transition: color .2s, transform .35s var(--ease);
-    }
-    .lb__close:hover { color: var(--white); transform: rotate(90deg); }
-
-    .lb__stage {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      position: relative; padding: 0 4.5rem; min-height: 0;
-    }
-    .lb__img {
-      max-width: 100%; max-height: 100%;
-      object-fit: contain; display: block;
-      transition: opacity .18s;
-    }
-    .lb__img.fade { opacity: 0; }
-
-    .lb__btn {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      width: 52px; height: 52px;
-      display: flex; align-items: center; justify-content: center;
-      border: 1px solid rgba(255,255,255,.1);
-      color: rgba(255,255,255,.45); font-size: 1.25rem;
-      transition: border-color .2s, color .2s, background .2s;
-    }
-    .lb__btn:hover {
-      border-color: rgba(255,255,255,.35); color: var(--white);
-      background: rgba(255,255,255,.04);
-    }
-    .lb__prev { left: 1rem; }
-    .lb__next { right: 1rem; }
-
-    .lb__thumbs {
-      flex-shrink: 0; height: 82px;
-      display: flex; align-items: center; gap: 5px;
-      padding: 0 1.5rem; overflow-x: auto; scrollbar-width: none;
-    }
-    .lb__thumbs::-webkit-scrollbar { display: none; }
-    .lb__thumb {
-      flex-shrink: 0; width: 60px; height: 56px;
-      overflow: hidden; opacity: .3;
-      border: 1px solid transparent; cursor: pointer;
-      transition: opacity .22s, border-color .22s;
-    }
-    .lb__thumb.a { opacity: 1; border-color: var(--gold); }
-    .lb__thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* ─── Responsive ─────────────────────────────────────── */
-    @media (max-width: 1100px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero__r { height: 55vw; min-height: 280px; }
-      .hero__r::before { background: linear-gradient(to bottom, var(--bg) 0%, transparent 28%); }
-      .hero__scroll { display: none; }
-      .about { grid-template-columns: 1fr; }
-      .stats__i { grid-template-columns: repeat(2, 1fr); }
-      .stats__cell:nth-child(2n+1) { border-left: none; }
-      .stats__cell:nth-child(n+3) {
-        border-top: 1px solid rgba(255,255,255,.08);
-        padding-top: 1.5rem; margin-top: 1.5rem;
-      }
-      .proc__steps { grid-template-columns: repeat(2, 1fr); }
-      .contact__i { grid-template-columns: 1fr; }
-      .contact__r { padding-top: 0; }
-      .gal__grid { columns: 2; }
-    }
-
-    @media (max-width: 768px) {
-      :root { --pad: 1.25rem; }
-      .nav__links, .nav__cta { display: none; }
-      .nav__burger { display: flex; }
-      .cur-ring, .cur-dot { display: none !important; }
-      .hero__l { padding: calc(var(--nav-h) + 2rem) var(--pad) 2.5rem; }
-      .hero__title { font-size: clamp(3.5rem, 14vw, 5.5rem); }
-      .hero__sig { width: 150px; }
-      .svcs__grid { grid-template-columns: 1fr; }
-      .svc { padding: 2rem; }
-      .folio__grid { grid-template-columns: 1fr; grid-auto-rows: 58vw; }
-      .pi:nth-child(n) { grid-column: span 1; grid-row: span 1; }
-      .folio__hd { flex-direction: column; align-items: flex-start; gap: .5rem; }
-      .proc__steps { grid-template-columns: 1fr; gap: 2.5rem; }
-      .ft__i { flex-direction: column; gap: 1.25rem; text-align: center; }
-      .ft__links { justify-content: center; }
-      .gal__grid { columns: 1; }
-      .gal__body { padding: 1rem 1rem 2.5rem; }
-      .gal__head { padding: 1rem 1.25rem; }
-      .lb__stage { padding: 0 3rem; }
-      .lb__btn { width: 42px; height: 42px; font-size: 1rem; }
-      .lb__prev { left: .3rem; }
-      .lb__next { right: .3rem; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
 
-<!-- ─── Custom cursor ──────────────────────────────────── -->
-<div class="cur-ring" id="curRing"></div>
-<div class="cur-dot"  id="curDot"></div>
+<!-- Noise texture -->
+<div class="noise" aria-hidden="true"></div>
 
-<!-- ─── Mobile menu ───────────────────────────────────── -->
-<div class="mob" id="mob">
-  <a href="#about"     class="mob__lk" data-ml>Обо мне</a>
-  <a href="#services"  class="mob__lk" data-ml>Услуги</a>
-  <a href="#portfolio" class="mob__lk" data-ml>Проекты</a>
-  <a href="#contact"   class="mob__lk" data-ml>Контакты</a>
+<!-- Preloader -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__count">0</div>
+  <div class="preloader__bar">
+    <div class="preloader__bar-fill"></div>
+  </div>
 </div>
 
-<!-- ─── Nav ───────────────────────────────────────────── -->
-<nav class="nav" id="nav">
+<!-- Custom cursor -->
+<div class="cur-dot"  id="curDot"  aria-hidden="true"></div>
+<div class="cur-ring" id="curRing" aria-hidden="true"></div>
+
+<!-- Mobile menu -->
+<div class="mob" id="mob" aria-label="Мобильное меню">
+  <a href="#about"     class="mob__lk">Обо мне</a>
+  <a href="#services"  class="mob__lk">Услуги</a>
+  <a href="#portfolio" class="mob__lk">Проекты</a>
+  <a href="#contact"   class="mob__lk">Контакты</a>
+</div>
+
+<!-- Nav -->
+<nav class="nav" id="nav" aria-label="Главное меню">
   <div class="nav__i">
     <a href="./" class="nav__logo">
-      <img src="static/images/logo/logo-black.png" alt="Madina Bekassyl">
+      <img src="static/images/logo/logo-white.png" alt="Madina Bekassyl">
     </a>
     <div class="nav__links">
       <a href="#about"     class="nav__lk">Обо мне</a>
@@ -700,255 +49,316 @@
       <a href="#contact"   class="nav__lk">Контакты</a>
     </div>
     <a href="#contact" class="nav__cta">Связаться</a>
-    <button class="nav__burger" id="burger" aria-label="Menu">
+    <button class="nav__burger" id="burger" aria-label="Открыть меню">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
-<!-- ─── Hero ──────────────────────────────────────────── -->
+<!-- Hero -->
 <section class="hero" id="home">
   <div class="hero__l">
-    <span class="hero__eyebrow">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
+    <span class="hero__tag">Interior Design Studio &nbsp;·&nbsp; Алматы</span>
     <h1 class="hero__title">
-      Madina<br><em>Bekassyl</em>
+      <span class="hero__title-line"><span>Madina</span></span>
+      <span class="hero__title-line italic"><span>Bekassyl</span></span>
     </h1>
     <div class="hero__sig">
       <video autoplay loop muted playsinline>
         <source src="static/images/logo/signature-black.mp4" type="video/mp4">
-        <img src="static/images/logo/signature-black.gif" alt="Signature">
+        <img src="static/images/logo/signature-black.gif" alt="Подпись Мадины">
       </video>
     </div>
     <p class="hero__tagline">Создаю пространства, которые отражают вас</p>
     <div class="hero__meta">
       <span>КазГАСА</span>
-      <span class="hero__dot"></span>
+      <span class="hero__sep"></span>
       <span>Белград, Сербия</span>
-      <span class="hero__dot"></span>
+      <span class="hero__sep"></span>
       <span>С 2014 года</span>
     </div>
   </div>
   <div class="hero__r">
     <img src="static/images/photos/portrait.jpg" alt="Madina Bekassyl — Interior Designer">
   </div>
-  <a href="#about" class="hero__scroll">
+  <a href="#about" class="hero__scroll" aria-label="Прокрутить вниз">
     <span>Scroll</span>
-    <div class="hero__scroll-ln"></div>
+    <div class="hero__scroll-line"></div>
   </a>
 </section>
 
-<!-- ─── Stats ─────────────────────────────────────────── -->
+<!-- Marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <div class="marquee__item">
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      С 2014 года <span class="marquee__dot"></span>
+      50 000+ кв.м. <span class="marquee__dot"></span>
+      50+ проектов <span class="marquee__dot"></span>
+      2 страны <span class="marquee__dot"></span>
+      КазГАСА <span class="marquee__dot"></span>
+      Белград
+    </div>
+    <div class="marquee__item">
+      Interior Design <span class="marquee__dot"></span>
+      Алматы <span class="marquee__dot"></span>
+      С 2014 года <span class="marquee__dot"></span>
+      50 000+ кв.м. <span class="marquee__dot"></span>
+      50+ проектов <span class="marquee__dot"></span>
+      2 страны <span class="marquee__dot"></span>
+      КазГАСА <span class="marquee__dot"></span>
+      Белград
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
 <div class="stats">
   <div class="stats__i">
-    <div class="stats__cell r">
+    <div class="stats__cell reveal">
       <strong class="stats__n">50 000+</strong>
       <span class="stats__l">кв.м. спроектировано</span>
     </div>
-    <div class="stats__cell r d1">
+    <div class="stats__cell reveal d1">
       <strong class="stats__n">10+</strong>
       <span class="stats__l">лет опыта</span>
     </div>
-    <div class="stats__cell r d2">
+    <div class="stats__cell reveal d2">
       <strong class="stats__n">50+</strong>
       <span class="stats__l">реализованных проектов</span>
     </div>
-    <div class="stats__cell r d3">
+    <div class="stats__cell reveal d3">
       <strong class="stats__n">2</strong>
       <span class="stats__l">страны практики</span>
     </div>
   </div>
 </div>
 
-<!-- ─── About ─────────────────────────────────────────── -->
-<section id="about">
+<!-- Statement — fromanother.love inspired -->
+<div class="statement">
+  <div class="statement__i">
+    <p class="statement__text reveal">
+      Со мной вы получаете не просто красивый интерьер&nbsp;—
+      вы получаете пространство, которое правильно построено,
+      продуманно спроектировано и прослужит вам десятилетия.
+    </p>
+    <div class="statement__line reveal d1" aria-hidden="true"></div>
+    <span class="statement__sub reveal d2">Madina Bekassyl &nbsp;·&nbsp; Interior Design &nbsp;·&nbsp; Алматы</span>
+  </div>
+</div>
+
+<!-- About -->
+<section id="about" class="about-section">
   <div class="about">
-    <div class="about__img r">
-      <img src="static/images/photos/portrait-2.jpg" alt="Madina Bekassyl">
-      <div class="about__img-frame"></div>
+    <div class="about__visual reveal">
+      <div class="about__img">
+        <img src="static/images/photos/portrait-2.jpg" alt="Madina Bekassyl">
+      </div>
+      <div class="about__frame" aria-hidden="true"></div>
+      <div class="about__num" aria-hidden="true">50+</div>
     </div>
     <div class="about__content">
-      <span class="label">Обо мне</span>
-      <h2 class="about__h r">Дизайнер,<br><em>создающий истории</em></h2>
-      <div class="about__body r d1">
-        <p>Я Мадина — интерьерный дизайнер с 2014 года. Выпускница Казахской Государственной Архитектурно-Строительной Академии (КазГАСА).</p>
-        <p>Стажировалась в Сербии, в Белграде, где приобрела ценный международный опыт и уникальные подходы к созданию пространства.</p>
-        <p>За годы работы разработала более 50 000 квадратных метров жилых и коммерческих пространств. Каждый проект отражает индивидуальность клиента и высочайшие стандарты качества.</p>
+      <span class="about__tag reveal">Обо мне</span>
+      <h2 class="about__h reveal">Архитектурная база&nbsp;—<br><em>ваша гарантия</em></h2>
+      <div class="about__text reveal d1">
+        <p>Я Мадина — интерьерный дизайнер из Алматы с дипломом архитектора с 2014 года и более чем 50 реализованными проектами.</p>
+        <p>Окончила КазГАСА и проходила стажировку в студии Базис-А в Белграде, была ведущим дизайнером одной из студий Алматы.</p>
+        <p>Нестандартные планировки, вторичное жильё, многоуровневые пространства, дома с нуля — я работаю с любой сложностью, потому что за этим стоит архитектурная база, а не только насмотренность.</p>
       </div>
-      <div class="about__creds r d2">
-        <div class="about__cred">КазГАСА — архитектурно-строительное образование</div>
-        <div class="about__cred">Стажировка в Белграде, Сербия</div>
-        <div class="about__cred">Жилые и коммерческие проекты</div>
-        <div class="about__cred">Функциональность и эстетика в каждой детали</div>
+      <div class="about__creds reveal d2">
+        <div class="about__cred">КазГАСА — диплом архитектора</div>
+        <div class="about__cred">Стажировка в Белграде, студия Базис-А</div>
+        <div class="about__cred">Ведущий дизайнер студии в Алматы</div>
+        <div class="about__cred">Любая сложность — от вторичного жилья до домов с нуля</div>
       </div>
-      <a href="#contact" class="btn btn--border r d3">Обсудить проект</a>
+      <a href="#contact" class="btn btn--gold reveal d3">Обсудить проект</a>
     </div>
   </div>
 </section>
 
-<!-- ─── Services ──────────────────────────────────────── -->
+<!-- Portfolio -->
+<section id="portfolio" class="folio">
+  <div class="folio__i">
+
+    <div class="folio__hd reveal">
+      <div>
+        <span class="folio__tag">Портфолио</span>
+        <h2 class="folio__h">Избранные<br>проекты</h2>
+      </div>
+      <span class="folio__count">6 проектов</span>
+    </div>
+
+    <ul class="proj-list">
+      <li class="proj-item reveal" data-project="belle-view">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">01</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Belle View</div>
+            <div class="proj-item__sub">2025 &nbsp;·&nbsp; 150 м² &nbsp;·&nbsp; Современный &nbsp;·&nbsp; Реализован</div>
+          </div>
+          <span class="proj-item__badge">11 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+      <li class="proj-item reveal d1" data-project="kazybek">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">02</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Kazybek Bi</div>
+            <div class="proj-item__sub">2024 &nbsp;·&nbsp; 82 м² &nbsp;·&nbsp; Объединение 2 квартир &nbsp;·&nbsp; Реализован</div>
+          </div>
+          <span class="proj-item__badge">10 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+      <li class="proj-item reveal d2" data-project="arena-park">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">03</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Arena Park</div>
+            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Минимализм</div>
+          </div>
+          <span class="proj-item__badge">13 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+      <li class="proj-item reveal" data-project="arena-park-2">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">04</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Arena Park II</div>
+            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</div>
+          </div>
+          <span class="proj-item__badge">9 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+      <li class="proj-item reveal d1" data-project="arman">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">05</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Arman</div>
+            <div class="proj-item__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный с классикой</div>
+          </div>
+          <span class="proj-item__badge">12 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+      <li class="proj-item reveal d2" data-project="office">
+        <div class="proj-item__inner">
+          <span class="proj-item__num">06</span>
+          <div class="proj-item__info">
+            <div class="proj-item__name">Office</div>
+            <div class="proj-item__sub">Коммерческий &nbsp;·&nbsp; Современный</div>
+          </div>
+          <span class="proj-item__badge">11 фото</span>
+          <div class="proj-item__arrow">→</div>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</section>
+
+<!-- Floating hover image for project list -->
+<div class="proj-hover-img" id="projHoverImg" aria-hidden="true">
+  <img src="" alt="">
+</div>
+
+<!-- Services -->
 <section id="services" class="svcs">
   <div class="svcs__i">
-    <div class="svcs__hd r">
-      <span class="label">Услуги</span>
-      <h2>Что я предлагаю</h2>
+    <div class="svcs__hd">
+      <span class="svcs__tag reveal">Услуги</span>
+      <h2 class="svcs__h reveal">Что я предлагаю</h2>
     </div>
     <div class="svcs__grid">
-      <div class="svc r">
+      <div class="svc reveal">
         <span class="svc__n">01</span>
-        <h3 class="svc__title">Полный дизайн-проект</h3>
-        <p class="svc__desc">Максимально наполненный проект: планировочные решения, коллажи, реалистичные 3D-визуализации (4–8 ракурсов), рабочие чертежи для строительной бригады, ведомость и техзадание по индивидуальной мебели.</p>
-        <div class="svc__price">12 000 ₸ / кв.м.</div>
+        <h3 class="svc__title">Планировочное решение + Электрика</h3>
+        <p class="svc__desc">Отправная точка любого ремонта. Разрабатываю 2–3 варианта планировки на основе ваших пожеланий. Выбираете лучший или создаём микс до финального ДА. Дополнительно по запросу: план освещения, розеток, управления светом. Подходит, если делаете дизайн самостоятельно, но хотите профессиональную основу.</p>
+        <div class="svc__price">2 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 160 000 тг.</span></div>
       </div>
-      <div class="svc r d1">
+      <div class="svc reveal d1">
         <span class="svc__n">02</span>
-        <h3 class="svc__title">Эскизный проект</h3>
-        <p class="svc__desc">Планировочное решение, коллажи с реальными материалами и мебелью в рамках бюджета, рабочие чертежи и ведомость к проекту. Идеально для объектов до 150 кв.м. Гибкая система расчёта.</p>
-        <div class="svc__price">9 000 ₸ / кв.м.</div>
+        <h3 class="svc__title">Эскизный дизайн-проект</h3>
+        <p class="svc__desc">Полноценный проект в формате коллажей. Коллаж — это концепция интерьера: стиль, цвета и настроение пространства. Финальный вид согласовывается вживую в процессе ремонта. Подходит, если у вас уже есть опыт ремонта и вы готовы участвовать в выборе материалов лично.</p>
+        <div class="svc__price">10 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 800 000 тг.</span></div>
       </div>
-      <div class="svc r d2">
+      <div class="svc reveal d2">
         <span class="svc__n">03</span>
-        <h3 class="svc__title">Планировочное решение</h3>
-        <p class="svc__desc">Замер помещения, обмерный план, разработка 2–3 вариантов планировки на основе брифа. Расстановка мебели и сантехники с габаритными размерами. Можно заказать отдельно.</p>
-        <div class="svc__price">2 000 ₸ / кв.м.</div>
+        <h3 class="svc__title">Полный дизайн-проект</h3>
+        <p class="svc__desc">Максимально наполненный формат. Видите свою будущую квартиру до начала ремонта — фотореалистично, по каждому помещению, с реальными материалами, мебелью и светом. 4–8 ракурсов. Никаких сюрпризов в процессе. В состав входит всё: планировка, коллажи, 3Д визуализации, рабочие чертежи, техзадание по мебели, ведомость отделки.</p>
+        <div class="svc__price">14 000 ₸ / кв.м. <span class="svc__example">Квартира 80 м² — от 1 120 000 тг.</span></div>
       </div>
-      <div class="svc r d3">
+      <div class="svc reveal d3">
         <span class="svc__n">04</span>
-        <h3 class="svc__title">Авторское сопровождение</h3>
-        <p class="svc__desc">Контроль соответствия проекту, выезды в салоны, согласование материалов и отделки, постоянная связь с прорабом, приёмка ключевых этапов стройки, оперативное решение вопросов.</p>
-        <div class="svc__price">150 000 ₸ / мес.</div>
+        <h3 class="svc__title">Комплектация и авторское сопровождение</h3>
+        <p class="svc__desc">Остаюсь рядом на протяжении всего ремонта. Контролирую стройку, веду коммуникацию с подрядчиками и строителями, выезжаю на ключевые этапы, слежу за поставками и решаю все вопросы, которые неизбежно возникают в процессе. Вы занимаетесь своей жизнью — я занимаюсь вашим ремонтом.</p>
+        <div class="svc__price">от 150 000 ₸ / мес.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── Portfolio ──────────────────────────────────────── -->
-<section id="portfolio" class="folio">
-  <div class="folio__hd r">
-    <div>
-      <span class="label">Портфолио</span>
-      <h2>Избранные проекты</h2>
-    </div>
-    <span class="folio__count">6 проектов</span>
-  </div>
-
-  <div class="folio__grid">
-
-    <div class="pi r" onclick="openGallery('belle-view')">
-      <div class="pi__img">
-        <img src="static/images/projects/belle-view/01.jpg" alt="Belle View" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Belle View</h3>
-        <p class="pi__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">11 фото</span>
-    </div>
-
-    <div class="pi r d1" onclick="openGallery('kazybek')">
-      <div class="pi__img">
-        <img src="static/images/projects/kazybek/01.jpg" alt="Kazybek Bi" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Kazybek Bi</h3>
-        <p class="pi__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">10 фото</span>
-    </div>
-
-    <div class="pi r d2" onclick="openGallery('arena-park')">
-      <div class="pi__img">
-        <img src="static/images/projects/arena-park/01.jpg" alt="Arena Park" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Arena Park</h3>
-        <p class="pi__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Минимализм</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">13 фото</span>
-    </div>
-
-    <div class="pi r" onclick="openGallery('arena-park-2')">
-      <div class="pi__img">
-        <img src="static/images/projects/arena-park-2/02.jpg" alt="Arena Park II" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Arena Park II</h3>
-        <p class="pi__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный стиль</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">9 фото</span>
-    </div>
-
-    <div class="pi r d1" onclick="openGallery('arman')">
-      <div class="pi__img">
-        <img src="static/images/projects/arman/01.jpg" alt="Arman" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Arman</h3>
-        <p class="pi__sub">2024 &nbsp;·&nbsp; Жилой &nbsp;·&nbsp; Современный с классикой</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">12 фото</span>
-    </div>
-
-    <div class="pi r d2" onclick="openGallery('office')">
-      <div class="pi__img">
-        <img src="static/images/projects/office/01.jpg" alt="Office" loading="lazy">
-      </div>
-      <div class="pi__ov">
-        <h3 class="pi__name">Office</h3>
-        <p class="pi__sub">Коммерческий &nbsp;·&nbsp; Современный</p>
-        <span class="pi__cta">Открыть галерею</span>
-      </div>
-      <span class="pi__badge">11 фото</span>
-    </div>
-
-  </div>
-</section>
-
-<!-- ─── Process ───────────────────────────────────────── -->
+<!-- Process -->
 <section class="proc">
   <div class="proc__i">
-    <div class="proc__hd r">
-      <span class="label">Как я работаю</span>
-      <h2>Процесс создания<br><em>вашего пространства</em></h2>
+    <div class="proc__hd">
+      <span class="proc__tag reveal">Как я работаю</span>
+      <h2 class="proc__h reveal">Процесс создания<br><em>вашего пространства</em></h2>
     </div>
     <div class="proc__steps">
-      <div class="pstep r">
+      <div class="pstep reveal">
         <div class="pstep__n">01</div>
-        <h3 class="pstep__t">Знакомство и бриф</h3>
-        <p class="pstep__d">Встреча, обсуждение пожеланий, стиля, бюджета и сроков. Заполнение подробного брифа для точного понимания задачи и характера будущего пространства.</p>
+        <h3 class="pstep__t">Знакомство <span class="pstep__free">бесплатно</span></h3>
+        <p class="pstep__d">Встречаемся лично или созваниваемся по видеосвязи. Вы рассказываете о своём объекте, пожеланиях, стиле и бюджете. Я отвечаю на все вопросы. Никаких обязательств — просто разговор.</p>
       </div>
-      <div class="pstep r d1">
+      <div class="pstep reveal d1">
         <div class="pstep__n">02</div>
-        <h3 class="pstep__t">Концепция и планировка</h3>
-        <p class="pstep__d">Разработка 2–3 планировочных решений. Выбор и детальная проработка концепции с коллажами, референсами и подбором реальных материалов в рамках бюджета.</p>
+        <h3 class="pstep__t">Договор и бриф</h3>
+        <p class="pstep__d">Работаем строго по договору в чётко обозначенные сроки. После подписания вы заполняете анкету — приятный опросник, который поможет мне понять вас и ваш будущий дом. Создаём общий чат в удобном мессенджере.</p>
       </div>
-      <div class="pstep r d2">
+      <div class="pstep reveal d2">
         <div class="pstep__n">03</div>
-        <h3 class="pstep__t">Визуализация и сдача</h3>
-        <p class="pstep__d">Реалистичные 3D-визуализации по утверждённым коллажам, полный комплект рабочих чертежей, ведомость материалов и авторское сопровождение реализации.</p>
+        <h3 class="pstep__t">Замер и планировка</h3>
+        <p class="pstep__d">Выезжаю на объект, делаю обмерный план. Разрабатываю 2–3 варианта планировки. Выбираете лучший или создаём микс — без ограничений по правкам на этом этапе.</p>
+      </div>
+      <div class="pstep reveal">
+        <div class="pstep__n">04</div>
+        <h3 class="pstep__t">Дизайн-концепция</h3>
+        <p class="pstep__d">В зависимости от выбранного пакета — коллажи или фотореалистичные 3D-визуализации. Подбираем реальную мебель, отделку, свет и сантехнику в рамках вашего бюджета. Правим до вашего искреннего «да».</p>
+      </div>
+      <div class="pstep reveal d1">
+        <div class="pstep__n">05</div>
+        <h3 class="pstep__t">Рабочие чертежи</h3>
+        <p class="pstep__d">Полный комплект документации для строительной бригады: от обмерного плана до развёрток по санузлам с раскладкой плитки. Строители получают чёткую инструкцию — вопросов «а как это делать?» не возникает.</p>
+      </div>
+      <div class="pstep reveal d2">
+        <div class="pstep__n">06</div>
+        <h3 class="pstep__t">Сопровождение и сдача</h3>
+        <p class="pstep__d">При заказе авторского сопровождения контролирую стройку, выезжаю на ключевые этапы и слежу за поставками. В финале — фиксируем результат и вы въезжаете в готовый дом. Среднее время разработки полного проекта — 4–6 недель.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── Contact ───────────────────────────────────────── -->
+<!-- Contact -->
 <section id="contact" class="contact">
   <div class="contact__i">
-    <div class="contact__l r">
-      <span class="label">Контакты</span>
-      <h2 class="contact__h">
-        Готовы создать<br><em>ваше пространство?</em>
+    <div class="contact__l">
+      <span class="contact__tag reveal">Готовы начать?</span>
+      <h2 class="contact__h reveal">
+        Если вы дочитали<br>до этого момента —<br><em>это хороший знак.</em>
       </h2>
-      <p class="contact__p">
-        Если вы думаете о дизайн-проекте или просто хотите узнать больше — напишите мне. Я отвечу в течение 24 часов и с удовольствием обсужу вашу идею.
+      <p class="contact__p reveal d1">
+        Напишите мне сейчас — расскажите коротко: что за объект, примерный метраж и когда планируете начать. Я отвечу и предложу время для бесплатной консультации.
       </p>
-      <a href="mailto:madinabks.interiordesign@gmail.com" class="btn btn--border">Написать письмо</a>
+      <p class="contact__usп reveal d1">Я беру не более 2 новых проектов в месяц&nbsp;— чтобы каждому клиенту уделять столько внимания, сколько нужно.</p>
+      <a href="mailto:madinabks.interiordesign@gmail.com" class="btn btn--outline reveal d2">Написать письмо</a>
     </div>
-    <div class="contact__r r d1">
+    <div class="contact__r reveal d1">
       <div class="contact__items">
         <div>
           <div class="ci__label">Email</div>
@@ -975,22 +385,22 @@
   </div>
 </section>
 
-<!-- ─── Footer ────────────────────────────────────────── -->
-<footer class="ft">
-  <div class="ft__i">
-    <div class="ft__logo">
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer__i">
+    <div class="footer__logo">
       <img src="static/images/logo/logo-white.png" alt="Madina Bekassyl">
     </div>
-    <span class="ft__copy">© 2025 Madina Bekassyl. Все права защищены.</span>
-    <div class="ft__links">
-      <a href="#about"     class="ft__lk">Обо мне</a>
-      <a href="#portfolio" class="ft__lk">Проекты</a>
-      <a href="#contact"   class="ft__lk">Контакты</a>
+    <span class="footer__copy">© 2025 Madina Bekassyl. Все права защищены.</span>
+    <div class="footer__links">
+      <a href="#about"     class="footer__lk">Обо мне</a>
+      <a href="#portfolio" class="footer__lk">Проекты</a>
+      <a href="#contact"   class="footer__lk">Контакты</a>
     </div>
   </div>
 </footer>
 
-<!-- ─── Gallery modal ─────────────────────────────────── -->
+<!-- Gallery modal -->
 <div class="gal" id="gal" role="dialog" aria-modal="true" aria-label="Галерея проекта">
   <header class="gal__head">
     <div>
@@ -1004,7 +414,7 @@
   </div>
 </div>
 
-<!-- ─── Lightbox ──────────────────────────────────────── -->
+<!-- Lightbox -->
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Просмотр фото">
   <header class="lb__head">
     <div class="lb__counter" id="lbCounter"></div>
@@ -1018,189 +428,6 @@
   <div class="lb__thumbs" id="lbThumbs"></div>
 </div>
 
-<script>
-/* ── Project registry ─────────────────────────────────── */
-const PROJECTS = {
-  'belle-view':   { name: 'Belle View',    meta: '2024 · Жилой · Современный стиль', count: 11 },
-  'kazybek':      { name: 'Kazybek Bi',    meta: '2024 · Жилой · Современный стиль', count: 10 },
-  'arena-park':   { name: 'Arena Park',    meta: '2024 · Жилой · Минимализм',        count: 13 },
-  'arena-park-2': { name: 'Arena Park II', meta: '2024 · Жилой · Современный стиль', count: 9  },
-  'arman':        { name: 'Arman',         meta: '2024 · Жилой · Современный стиль', count: 12 },
-  'office':       { name: 'Office',        meta: 'Коммерческий · Современный',       count: 11 },
-};
-
-function projectImages(id, count) {
-  return Array.from({ length: count }, (_, i) =>
-    `static/images/projects/${id}/${String(i + 1).padStart(2, '0')}.jpg`
-  );
-}
-
-/* ── Gallery state ────────────────────────────────────── */
-let curProject = null;
-
-function openGallery(id) {
-  const p = PROJECTS[id];
-  if (!p) return;
-  curProject = { id, ...p, images: projectImages(id, p.count) };
-
-  document.getElementById('galName').textContent = p.name;
-  document.getElementById('galMeta').textContent = `${p.meta} · ${p.count} фото`;
-
-  const grid = document.getElementById('galGrid');
-  grid.innerHTML = curProject.images.map((src, i) =>
-    `<div class="gal__item" data-idx="${i}">
-       <img src="${src}" alt="${p.name} — фото ${i + 1}" loading="lazy">
-     </div>`
-  ).join('');
-
-  const modal = document.getElementById('gal');
-  modal.classList.add('open');
-  document.getElementById('gal').querySelector('.gal__body').scrollTop = 0;
-  document.body.style.overflow = 'hidden';
-
-  /* Stagger items into view using IntersectionObserver */
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.05, root: document.getElementById('gal').querySelector('.gal__body') });
-
-  grid.querySelectorAll('.gal__item').forEach((el, i) => {
-    el.style.transitionDelay = Math.min(i, 9) * 55 + 'ms';
-    io.observe(el);
-    el.addEventListener('click', () => openLightbox(+el.dataset.idx));
-  });
-}
-
-function closeGallery() {
-  document.getElementById('gal').classList.remove('open');
-  document.body.style.overflow = '';
-  curProject = null;
-}
-
-/* ── Lightbox state ───────────────────────────────────── */
-let lbIdx = 0;
-
-function openLightbox(idx) {
-  lbIdx = idx;
-  renderLightbox();
-  document.getElementById('lb').classList.add('open');
-}
-
-function renderLightbox() {
-  const { images, name } = curProject;
-  const img = document.getElementById('lbImg');
-
-  img.classList.add('fade');
-  const src = images[lbIdx];
-  const loader = new Image();
-  loader.onload = () => {
-    img.src = src;
-    img.alt = `${name} — фото ${lbIdx + 1}`;
-    img.classList.remove('fade');
-  };
-  loader.src = src;
-  if (img.src === loader.src) img.classList.remove('fade'); /* already cached */
-
-  document.getElementById('lbCounter').textContent = `${lbIdx + 1} / ${images.length}`;
-
-  const thumbs = document.getElementById('lbThumbs');
-  thumbs.innerHTML = images.map((s, i) =>
-    `<div class="lb__thumb${i === lbIdx ? ' a' : ''}" data-i="${i}">
-       <img src="${s}" alt="">
-     </div>`
-  ).join('');
-
-  thumbs.querySelectorAll('.lb__thumb').forEach(t =>
-    t.addEventListener('click', () => { lbIdx = +t.dataset.i; renderLightbox(); })
-  );
-
-  const active = thumbs.querySelector('.a');
-  if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-}
-
-function lbNext() { lbIdx = (lbIdx + 1) % curProject.images.length; renderLightbox(); }
-function lbPrev() { lbIdx = (lbIdx - 1 + curProject.images.length) % curProject.images.length; renderLightbox(); }
-function closeLb() { document.getElementById('lb').classList.remove('open'); }
-
-document.getElementById('galClose').addEventListener('click', closeGallery);
-document.getElementById('lbClose').addEventListener('click', closeLb);
-document.getElementById('lbNext').addEventListener('click', lbNext);
-document.getElementById('lbPrev').addEventListener('click', lbPrev);
-
-document.addEventListener('keydown', e => {
-  if (document.getElementById('lb').classList.contains('open')) {
-    if (e.key === 'ArrowRight') lbNext();
-    else if (e.key === 'ArrowLeft') lbPrev();
-    else if (e.key === 'Escape') closeLb();
-  } else if (document.getElementById('gal').classList.contains('open')) {
-    if (e.key === 'Escape') closeGallery();
-  }
-});
-
-/* Swipe on lightbox */
-let tsX = 0;
-const lbEl = document.getElementById('lb');
-lbEl.addEventListener('touchstart', e => { tsX = e.touches[0].clientX; }, { passive: true });
-lbEl.addEventListener('touchend',   e => {
-  const dx = e.changedTouches[0].clientX - tsX;
-  if (Math.abs(dx) > 48) { dx < 0 ? lbNext() : lbPrev(); }
-});
-
-/* ── Nav scroll shadow ────────────────────────────────── */
-const navEl = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  navEl.classList.toggle('s', window.scrollY > 40);
-}, { passive: true });
-
-/* ── Mobile menu ──────────────────────────────────────── */
-const burger = document.getElementById('burger');
-const mob    = document.getElementById('mob');
-burger.addEventListener('click', () => {
-  const open = mob.classList.toggle('o');
-  burger.classList.toggle('o', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-});
-document.querySelectorAll('[data-ml]').forEach(lk =>
-  lk.addEventListener('click', () => {
-    mob.classList.remove('o'); burger.classList.remove('o');
-    document.body.style.overflow = '';
-  })
-);
-
-/* ── Scroll reveal ────────────────────────────────────── */
-const revealIO = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('on'); revealIO.unobserve(e.target); }
-  });
-}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.r').forEach(el => revealIO.observe(el));
-
-/* ── Custom cursor ────────────────────────────────────── */
-const ring = document.getElementById('curRing');
-const dot  = document.getElementById('curDot');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-window.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  dot.style.left = mx + 'px';
-  dot.style.top  = my + 'px';
-  document.body.classList.add('has-cursor');
-}, { passive: true });
-
-(function tick() {
-  rx += (mx - rx) * 0.1;
-  ry += (my - ry) * 0.1;
-  ring.style.left = rx + 'px';
-  ring.style.top  = ry + 'px';
-  requestAnimationFrame(tick);
-})();
-
-document.querySelectorAll('a, button, .pi, .svc').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
-});
-</script>
-
+<script src="static/js/app.js"></script>
 </body>
 </html>
