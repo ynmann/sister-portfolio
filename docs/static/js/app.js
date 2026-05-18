@@ -394,6 +394,12 @@ function initHeroSlideshow() {
     dot.addEventListener('click', () => { goTo(i); startAuto(); });
   });
 
+  // Left/right click zones for prev/next navigation
+  const prevZone = document.querySelector('.hero__feat-zone--prev');
+  const nextZone = document.querySelector('.hero__feat-zone--next');
+  prevZone?.addEventListener('click', () => { goTo((current - 1 + slides.length) % slides.length); startAuto(); });
+  nextZone?.addEventListener('click', () => { goTo((current + 1) % slides.length); startAuto(); });
+
   const feat = document.querySelector('.hero__feat');
   feat?.addEventListener('mouseenter', () => clearInterval(autoTimer));
   feat?.addEventListener('mouseleave', startAuto);
@@ -470,9 +476,9 @@ function initScrollReveal() {
 
     if (isTag) {
       gsap.fromTo(el,
-        { opacity: 0, x: IS_REDUCED ? 0 : -22 },
+        { opacity: 0, x: IS_REDUCED ? 0 : -22, y: IS_REDUCED ? 0 : 40 },
         {
-          opacity: 1, x: 0, duration: 0.7, ease: 'power2.out',
+          opacity: 1, x: 0, y: 0, duration: 0.7, ease: 'power2.out',
           scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
         }
       );

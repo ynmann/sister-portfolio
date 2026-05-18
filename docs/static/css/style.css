@@ -31,7 +31,7 @@
 
 /* === RESET =========================================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
+html { font-size: 16px; background: var(--bg-dark); }
 body {
   background: var(--bg);
   color: var(--text);
@@ -611,6 +611,46 @@ button { background: none; border: none; cursor: pointer; font: inherit; color: 
 .lb__thumb { flex-shrink: 0; width: 62px; height: 56px; overflow: hidden; opacity: 0.28; border: 1px solid transparent; cursor: pointer; transition: opacity 0.22s, border-color 0.22s; }
 .lb__thumb.active { opacity: 1; border-color: var(--gold); }
 .lb__thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+/* === HERO FEAT CLICK ZONES =========================== */
+.hero__feat-zone {
+  position: absolute; top: 0; bottom: 0; width: 45%; z-index: 5;
+  cursor: pointer; background: transparent; border: none; padding: 0;
+}
+.hero__feat-zone--prev { left: 0; }
+.hero__feat-zone--next { right: 0; }
+
+/* === CONTACT MESSENGERS ============================== */
+.contact__messengers { display: flex; flex-direction: column; }
+.cmsg {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+  color: var(--bg); transition: color 0.25s var(--ease);
+  text-decoration: none;
+}
+.cmsg:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+.cmsg__name {
+  font-family: var(--serif-display);
+  font-size: clamp(1.15rem, 2vw, 1.4rem); font-weight: 300; flex: 1; line-height: 1;
+}
+.cmsg__sub {
+  font-size: 11px; letter-spacing: 0.06em; color: rgba(242,237,227,0.3); font-weight: 300;
+  transition: color 0.25s;
+}
+.cmsg__arr {
+  font-size: 1rem; color: var(--gold); transition: transform 0.25s var(--ease);
+  flex-shrink: 0;
+}
+.cmsg:hover { color: var(--gold); }
+.cmsg:hover .cmsg__arr { transform: translate(4px, -4px); }
+.cmsg:hover .cmsg__sub { color: rgba(184,136,58,0.55); }
+
+.contact__email-alt {
+  display: inline-block; margin-top: 1.25rem;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: rgba(242,237,227,0.22); transition: color 0.2s;
+}
+.contact__email-alt:hover { color: rgba(242,237,227,0.45); }
 
 /* === TOUCH / HOVER NONE ============================== */
 /* On touch devices hover never fires — show info always visible */
